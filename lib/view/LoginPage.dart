@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -30,7 +31,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
   final password_controller= TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool pass_visibility,showLoading;
-
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  String fcmToken;
   @override
   void initState() {
     // TODO: implement initState
@@ -38,6 +40,19 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
     pass_visibility=true;
     showLoading=false;
 
+    _firebaseMessaging.requestNotificationPermissions(
+        const IosNotificationSettings(
+            sound: true, badge: true, alert: true, provisional: true,));
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {
+      print("Settings registered: $settings");
+    });
+    _firebaseMessaging.getToken().then((String token) {
+      assert(token != null);
+      setState(() {
+        fcmToken=token.toString();
+      });
+    });
     super.initState();
   }
 
@@ -219,9 +234,28 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
                                                     showLoading=false;
                                                     pref.setString('user_name', email_controller.text);
                                                   });
-                                                  Navigator.pushReplacement(
-                                                    context,
-                                                    MaterialPageRoute(builder: (context) => HomePage()),
+
+                                                  CollectionReference users = FirebaseFirestore.instance.collection('user');
+                                                  users
+                                                      .doc(userID)
+                                                      .update({'token': fcmToken})
+                                                      .then((value) {
+                                                    print("User Updated");
+                                                    Navigator.pushReplacement(
+                                                      context,
+                                                      MaterialPageRoute(builder: (context) => HomePage(0)),
+                                                    );
+                                                  })
+                                                      .catchError((error) { setState(() {
+                                                    showLoading=false;
+                                                  });
+                                                  _scaffoldKey.currentState
+                                                      .showSnackBar(SnackBar(
+                                                    content: Text('နောက်တကြိမ် ပြန်လည် ကြိူးစားကြည့်ပါ fcm'),
+                                                    duration: Duration(seconds: 3),
+                                                    backgroundColor: Constants.emergencyColor,
+                                                  ));
+                                                  }
                                                   );
                                                 }else{
                                                   setState(() {

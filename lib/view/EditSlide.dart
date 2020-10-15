@@ -101,16 +101,18 @@ class _EditSlideState extends State<EditSlide> {
 
 
   Future<bool> _onWillPop() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(0)));
   }
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: Scaffold(appBar:AppBar(title: Text('အလှဓါတ်ပုံများ',),backgroundColor: Constants.primaryColor,
+      child: Scaffold(appBar:AppBar(
+        automaticallyImplyLeading: false,
+        title: Text('အလှဓါတ်ပုံများ',),backgroundColor: Constants.primaryColor,
       leading: IconButton(
-        icon:Icon( Icons.arrow_back),
-        onPressed: ()=>Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()))
+        icon:Icon( Icons.arrow_back_ios_rounded),
+        onPressed: ()=>Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(0)))
       ),),
           body: SafeArea(
             child:Stack(

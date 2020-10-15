@@ -1,5 +1,5 @@
 class PriceModel {
-  String quantity;
+  int quantity;
   String price;
   String kind;
   String unit;

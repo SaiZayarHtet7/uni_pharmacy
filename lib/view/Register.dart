@@ -22,6 +22,13 @@ class _RegisterState extends State<Register> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_rounded),
+            onPressed: (){
+              Navigator.pop(context);
+            }
+        ),
         title: Text('Account list'),
         backgroundColor: Constants.primaryColor,
       ),
@@ -285,6 +292,13 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_rounded),
+            onPressed: (){
+              Navigator.pop(context);
+            }
+        ),
         title: Text('Registration'),
         backgroundColor: Constants.primaryColor,
       ),

@@ -23,6 +23,13 @@ class _ProductPageState extends State<ProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_rounded),
+          onPressed: (){
+            Navigator.pop(context);
+          }
+        ),
         title: Text('Product Category'),
         backgroundColor: Constants.primaryColor,
       ),

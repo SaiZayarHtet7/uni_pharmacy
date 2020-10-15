@@ -24,7 +24,15 @@ class _EditUntState extends State<EditUnt> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Constants.primaryColor, title: Text('Unit အသစ်ထည့်ရန် ',style: TextStyle(color: Colors.white,fontFamily: Constants.PrimaryFont),),),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_rounded),
+            onPressed: (){
+              Navigator.pop(context);
+            }
+        ),
+        backgroundColor: Constants.primaryColor, title: Text('Unit အသစ်ထည့်ရန် ',style: TextStyle(color: Colors.white,fontFamily: Constants.PrimaryFont),),),
       body:Container(
         padding: EdgeInsets.all(10),
         child: StreamBuilder<QuerySnapshot>(

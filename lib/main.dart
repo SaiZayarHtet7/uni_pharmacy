@@ -14,7 +14,7 @@ Future<void> main() async {
   SharedPreferences preferences=await SharedPreferences.getInstance();
   String userName=preferences.getString('user_name');
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MaterialApp(home: userName==null?LoginPage(): HomePage(),));
+  runApp(MaterialApp(home: userName==null?LoginPage(): HomePage(0),));
 }
 //
 // class MyApp extends StatelessWidget {

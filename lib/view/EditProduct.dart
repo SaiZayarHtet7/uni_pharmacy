@@ -87,6 +87,7 @@ class _EditProductState extends State<EditProduct> {
           unitList.add(result.data()['unit'].toString());
           print(unitList);
         });
+
         setState(() {
           startLoading=false;
         });
@@ -137,9 +138,11 @@ class _EditProductState extends State<EditProduct> {
       child: MaterialApp(
         home: Scaffold(
           key: _scaffoldKey,
-          appBar: AppBar(title: Text('Edit Product'),backgroundColor: Constants.primaryColor,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+              title: Text('Edit Product'),backgroundColor: Constants.primaryColor,
            leading: IconButton(
-                icon:Icon( Icons.arrow_back),
+                icon:Icon( Icons.arrow_back_ios_rounded),
                 onPressed: (){if(productId=="" || productId==null){
                   if(productImage!="" && productImage!= null) {
                     FirebaseStorageService().DeletePhoto(productImage);
@@ -330,6 +333,7 @@ class _EditProductState extends State<EditProduct> {
                             }
                             return Container(
                               child: ListView(
+                                physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 children: snapshot.data.documents.map((DocumentSnapshot document)
                                 {
@@ -337,12 +341,12 @@ class _EditProductState extends State<EditProduct> {
                                     onTap: (){
                                       FocusScope.of(context).requestFocus(FocusNode());
                                       priceController.text=document.data()['price'];
-                                      quantityController.text=document.data()["quantity"];
+                                      quantityController.text=document.data()["quantity"].toString();
                                       kindPrice=document.data()['price_kind'];
-                                      unit= document.data()['unit'];
+                                      unit= document.data()['unit'].toString();
                                       showAddBottomsheet(context,productId,document.data()['price_id'], unitList,kindList);
                                     },
-                                      child: PriceCard(document.data()['price_kind'], document.data()['quantity'], document.data()['unit'], document.data()['price']));
+                                      child: PriceCard(document.data()['price_kind'], document.data()['quantity'].toString(),document.data()['unit'].toString(), document.data()['price']));
                                 }).toList(),
                               ),
                             );
@@ -831,7 +835,7 @@ class _EditProductState extends State<EditProduct> {
                                         unit: unit,
                                         kind: kindPrice,
                                         price: priceController.text,
-                                        quantity: quantityController.text
+                                        quantity:int.parse(quantityController.text)
                                     );
                                     FirestoreService().addPrice(
                                         'price', productId, pricemodel);
@@ -847,7 +851,7 @@ class _EditProductState extends State<EditProduct> {
                                         unit: unit,
                                         kind: kindPrice,
                                         price: priceController.text,
-                                        quantity: quantityController.text
+                                        quantity: int.parse(quantityController.text)
                                     );
                                     FirestoreService().editPrice(
                                         'price', productId, pricemodel);

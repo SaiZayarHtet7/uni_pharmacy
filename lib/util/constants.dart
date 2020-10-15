@@ -13,7 +13,10 @@ class Constants{
   static Color TextFieldColor=Colors.grey;
   static Color DisableColor=Colors.grey;
   static String PrimaryFont='OpenSans';
+  static String orderDeliver='ပစ္စည်းပို့ပြီး';
+  static String orderPrepare='ပစ္စည်းပြင်ဆင်ဆဲ';
 
+  static Color thirdColorAccent=Hexcolor("#9967b641");
   final NumberFormat oCcy = new NumberFormat("#,###", "en_US");
   static  const kHeadingTextStyle = TextStyle(
     fontSize: 22,

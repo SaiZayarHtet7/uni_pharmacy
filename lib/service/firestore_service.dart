@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uni_pharmacy/models/CategoryModel.dart';
+import 'package:uni_pharmacy/models/OrderModel.dart';
 import 'package:uni_pharmacy/models/PriceModel.dart';
 import 'package:uni_pharmacy/models/ProductModel.dart';
 import 'package:uni_pharmacy/models/product_model.dart';
@@ -120,4 +121,47 @@ class FirestoreService {
         .catchError(
             (error) => print("Failed to delete $collectionName: $error"));
   }
+
+
+  Future<void> addOrder (String collectionName,String userId,OrderModel orderModel){
+    CollectionReference collectionReference= _db.collection('user').doc(userId).collection(collectionName);
+    collectionReference.doc(orderModel.orderId)
+        .set(orderModel.toMap()).then((value) => print("$collectionName added"))
+        .catchError((error)=> print("failed to add $collectionName"));
+  }
+  Future<void> editOrder(String collectionName,String userId,OrderModel orderModel) {
+    CollectionReference collectionReference= _db.collection('user').doc(userId).collection(collectionName);
+    collectionReference.doc(orderModel.orderId )
+        .update(orderModel.toMap()).then((value) => print("$collectionName update"))
+        .catchError((error)=> print("failed to update $collectionName"));
+  }
+  Future<void> removeOrder(String collectionName,String userId, String id) {
+    CollectionReference users = _db.collection('user').doc(userId).collection(collectionName);
+    return users
+        .doc('$id')
+        .delete()
+        .then((value) => print("$collectionName Deleted"))
+        .catchError(
+            (error) => print("Failed to delete $collectionName: $error"));
+  }
+
+  Future<void> editVoucherOrder(String collectionName,String voucherId,OrderModel orderModel) {
+    CollectionReference collectionReference= _db.collection('voucher').doc(voucherId).collection(collectionName);
+    collectionReference.doc(orderModel.orderId )
+        .update(orderModel.toMap()).then((value) => print("$collectionName voucher update"))
+        .catchError((error)=> print("failed to update $collectionName"));
+  }
+
+
+  Future<void> removeVoucherOrder(String collectionName,String voucherId, String id) {
+    CollectionReference users = _db.collection('voucher').doc(voucherId).collection(collectionName);
+    return users
+        .doc('$id')
+        .delete()
+        .then((value) => print("$collectionName Deleted"))
+        .catchError(
+            (error) => print("Failed to delete $collectionName: $error"));
+  }
+
+
 }

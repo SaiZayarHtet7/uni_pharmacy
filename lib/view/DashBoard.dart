@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:uni_pharmacy/service/firebase_storage.dart';
 import 'package:uni_pharmacy/service/firestore_service.dart';
@@ -12,6 +14,9 @@ import 'package:uni_pharmacy/view/EditSlide.dart';
 import 'package:uni_pharmacy/view/EditUnit.dart';
 import 'package:uni_pharmacy/view/ProductPage.dart';
 import 'package:uni_pharmacy/view/Register.dart';
+
+
+var flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
 
 class DashBoard extends StatefulWidget {
   @override
@@ -24,7 +29,8 @@ class _DashBoardState extends State<DashBoard> {
   int _current=0;
   List<String> imgList = [];
   bool loading;
-  int unitCount,userCount,categoryCount;
+  int unitCount,userCount,categoryCount,productCount;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
 
 @override
@@ -32,12 +38,76 @@ class _DashBoardState extends State<DashBoard> {
     // TODO: implement initState
   setState(() {
     Firebase.initializeApp();
+    FirebaseFirestore.instance.settings =
+        Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
+
+    var initializationSettingsAndroid = AndroidInitializationSettings('launch_background');
+    var initializationSettingsIOs = IOSInitializationSettings();
+    var initSetttings = InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOs);
+    _firebaseMessaging.requestNotificationPermissions();
+    _firebaseMessaging.configure();
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+        showNotification(message);
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(message['notification']['title'],style: TextStyle(color: Constants.primaryColor,fontSize: 20,fontFamily: Constants.PrimaryFont),),
+                SizedBox(height: 10.0,),
+                Text(message['notification']['body'],style: TextStyle(color: Colors.black,fontSize: 15,fontFamily: Constants.PrimaryFont), ),
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok',style: TextStyle(color:Constants.thirdColor,fontSize: 15,fontFamily: Constants.PrimaryFont),),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        );
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => ProductPage()));
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => ProductPage()));
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+
+      },
+    );
+    loading=true;
+
   });
 
   loading=true;
   fetchData();
     super.initState();
 
+  }
+
+  showNotification(Map<String, dynamic> msg) async {
+    var android = new AndroidNotificationDetails(
+        'id', 'channel ', 'description',
+        playSound: true,
+        sound: RawResourceAndroidNotificationSound('noti_sound'),
+        priority: Priority.High, importance: Importance.Max);
+
+    var iOS = new IOSNotificationDetails();
+    var platform = new NotificationDetails(android, iOS);
+    await flutterLocalNotificationsPlugin.show(
+        0, msg["notification"]["title"].toString(),msg["notification"]["body"].toString() , platform);
   }
 
   fetchData() async {
@@ -65,6 +135,11 @@ class _DashBoardState extends State<DashBoard> {
     FirebaseFirestore.instance.collection("category").get().then((value){
       categoryCount= value.docs.length;
       print('number of category'+categoryCount.toString());
+    });
+
+    FirebaseFirestore.instance.collection("product").get().then((value){
+      productCount= value.docs.length;
+      print('number of category'+productCount.toString());
     });
   }
 
@@ -175,7 +250,7 @@ class _DashBoardState extends State<DashBoard> {
                                 context,
                                 MaterialPageRoute(builder: (context) => ProductPage()),
                               ),
-                                child:  CardIcon(Icon(Icons.add,size: 50,color: Colors.white,), 'Add Product','4','#FD7F2C','#FD9346'),
+                                child:  CardIcon(Icon(Icons.add,size: 50,color: Colors.white,), 'Add Product','$productCount','#FD7F2C','#FD9346'),
                             ),
                             InkWell(
                               onTap: () =>Navigator.push(

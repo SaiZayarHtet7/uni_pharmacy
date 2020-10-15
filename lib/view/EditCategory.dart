@@ -26,7 +26,15 @@ class _EditCategoryState extends State<EditCategory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Category'),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_rounded),
+            onPressed: (){
+              Navigator.pop(context);
+            }
+        ),
+        title: Text('Category'),
       backgroundColor: Constants.primaryColor,),
       body: Container(
         padding: EdgeInsets.all(10),
