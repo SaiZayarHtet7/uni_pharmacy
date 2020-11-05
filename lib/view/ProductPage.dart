@@ -18,7 +18,6 @@ class _ProductPageState extends State<ProductPage> {
   String url, name, description;
   List<ProductModel> product = [];
   String searchName;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +29,7 @@ class _ProductPageState extends State<ProductPage> {
             Navigator.pop(context);
           }
         ),
-        title: Text('Product Category'),
+        title: Text('Product'),
         backgroundColor: Constants.primaryColor,
       ),
       body: Container(
@@ -38,35 +37,40 @@ class _ProductPageState extends State<ProductPage> {
         child: Stack(
           children: [
             Container(
+              color: Colors.white,
               padding: EdgeInsets.all(0),
+              height: 50,
               child: TextFormField(
                 keyboardType: TextInputType.name,
                 style: TextStyle(
-                    fontSize: 17.0, fontFamily: Constants.PrimaryFont),
+                    fontSize: 15.0, fontFamily: Constants.PrimaryFont),
                 onChanged: (value) {
                   setState(() {
                     searchName = value.toString();
                   });
                 },
                 decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(2),
                     hintText: 'အမည်ဖြင့်ရှာမည်',
                     prefixIcon: Icon(
                       Icons.search,
                       color: Constants.primaryColor,
                     ),
                     enabledBorder: new OutlineInputBorder(
-                      borderSide: new BorderSide(color: Constants.primaryColor),
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: new BorderSide(color: Colors.black,width: 1),
                     ),
                     focusedBorder: new OutlineInputBorder(
-                        borderSide:
-                            new BorderSide(color: Constants.primaryColor)),
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: new BorderSide(color: Colors.black,width: 1),),
                     border: new OutlineInputBorder(
-                      borderSide: new BorderSide(color: Constants.primaryColor),
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: new BorderSide(color: Colors.black,width: 1),
                     )),
               ),
             ),
             Container(
-              margin:  EdgeInsets.only(top: 90),
+              margin:  EdgeInsets.only(top: 60),
               child:StreamBuilder<QuerySnapshot>(
                   stream: (searchName=="" || searchName==null) ? FirestoreService().get('product'):FirebaseFirestore.instance
                       .collection('product').where("product_search", arrayContains : searchName).snapshots(),
@@ -80,9 +84,9 @@ class _ProductPageState extends State<ProductPage> {
                     }
                     return new GridView(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 5,
-                          crossAxisSpacing: 5),
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10),
                       children: snapshot.data.docs
                           .map(
                             (DocumentSnapshot document) => ProductCard(
@@ -130,51 +134,47 @@ class _ProductPageState extends State<ProductPage> {
                 builder: (context) =>
                     EditProduct(name, photo, id, description, category)));
       },
-      child: Container(
+      child:  Container(
         padding: EdgeInsets.all(0),
-        height: 105,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.black,)
-        ),
+        height:120,
         child: Column(
-          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CachedNetworkImage(
-              imageUrl: photo,
-              fit: BoxFit.cover,
-              imageBuilder: (context, imageProvider) => Container(
-                height: 70.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(9),
-                      topRight: Radius.circular(9)),
-                  image: DecorationImage(
-                      image: imageProvider, fit: BoxFit.cover),
-                ),
-              ),
-              placeholder: (context, url) => CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(Icons.error),
-            ),
-            SizedBox(height: 5.0,),
             Container(
               height: 25.0,
               padding: EdgeInsets.symmetric(horizontal: 3),
-              child: FittedBox(
-                fit: BoxFit.fitWidth,
-                child: Text(
-                  '$name',
-                  style: TextStyle(
-                    color: Constants.primaryColor,
-                    fontFamily: Constants.PrimaryFont,
-                    fontSize: 11,
-                  ),
+              child: Text(
+                '$name',
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: Constants.PrimaryFont,
+                  fontSize: 18,
                 ),
               ),
             ),
+            SizedBox(height: 5.0,),
+            Container(
+              child: CachedNetworkImage(
+                imageUrl: photo,
+                fit: BoxFit.cover,
+                imageBuilder: (context, imageProvider) => Container(
+                  height: 120.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(9),
+                    border:Border.all(color: Colors.black,width: 1),
+                    image: DecorationImage(
+                        image: imageProvider, fit: BoxFit.cover),
+                  ),
+                ),
+                placeholder: (context, url) => Container(height: 100, child: Center(child: CircularProgressIndicator())),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              ),
+            ),
+            SizedBox(height: 10.0,)
           ],
         ),
-      ),
+      )
     );
   }
 }

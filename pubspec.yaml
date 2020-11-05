@@ -48,6 +48,10 @@ dependencies:
   flutter_local_notifications: ^1.4.4+1
   http:
   scroll_to_index:
+  grouped_list: ^3.5.0
+  pull_to_refresh: ^1.6.1
+  badges: ^1.1.3
+  flutter_splash: ^1.0.1
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +72,19 @@ flutter:
   assets:
     - assets/image/logo.jpg
     - assets/anim/offline_anim.json
+    - assets/image/logo.png
+    - assets/image/logo.jpg
+    - assets/anim/offline_anim.json
+    - assets/image/circular_home.png
+    - assets/image/contact.png
+    - assets/image/message.png
+    - assets/image/order.png
+    - assets/image/price_list.png
+    - assets/image/product.png
+    - assets/image/smartphone.png
+    - assets/image/voucher.png
+    - assets/image/menu.png
+    - assets/image/logoCircle.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

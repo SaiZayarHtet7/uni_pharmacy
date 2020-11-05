@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_splash/flutter_splash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_pharmacy/testing/product.dart';
 import 'package:uni_pharmacy/util/constants.dart';
+import 'package:uni_pharmacy/view/DashBoard.dart';
 import 'package:uni_pharmacy/view/LoginPage.dart';
-import 'package:uni_pharmacy/view/home_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +15,17 @@ Future<void> main() async {
   SharedPreferences preferences=await SharedPreferences.getInstance();
   String userName=preferences.getString('user_name');
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MaterialApp(home: userName==null?LoginPage(): HomePage(0),));
+  runApp(MaterialApp(home:
+  Splash(
+    seconds: 3,
+    navigateAfterSeconds: userName == null ? LoginPage() : DashBoard(),
+    image: Image.asset('assets/image/logoCircle.png',),
+
+    backgroundColor:Constants.primaryColor,
+    title: Text('Uni Pharmacy application မှ ကြိုဆိုပါသည်',style: TextStyle(color: Colors.white,fontFamily: Constants.PrimaryFont),),
+    photoSize: 100,
+    loaderColor: Colors.white ,
+  ),));
 }
 //
 // class MyApp extends StatelessWidget {

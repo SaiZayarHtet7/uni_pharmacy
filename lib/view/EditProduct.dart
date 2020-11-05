@@ -10,6 +10,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uni_pharmacy/models/PriceModel.dart';
 import 'package:uni_pharmacy/models/ProductModel.dart';
+import 'package:uni_pharmacy/models/UpdatPrice.dart';
 import 'package:uni_pharmacy/service/firebase_storage.dart';
 import 'package:uni_pharmacy/service/firestore_service.dart';
 import 'package:uni_pharmacy/util/constants.dart';
@@ -18,8 +19,6 @@ import 'package:uni_pharmacy/view/Widget/PriceCard.dart';
 import 'package:uni_pharmacy/view/Widget/ToastContext.dart';
 import 'package:uni_pharmacy/view/Widget/ToastNoContext.dart';
 import 'package:uuid/uuid.dart';
-
-
 
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -344,7 +343,7 @@ class _EditProductState extends State<EditProduct> {
                                       quantityController.text=document.data()["quantity"].toString();
                                       kindPrice=document.data()['price_kind'];
                                       unit= document.data()['unit'].toString();
-                                      showAddBottomsheet(context,productId,document.data()['price_id'], unitList,kindList);
+                                      showAddBottomsheet(context,productId,document.data()['price_id'], unitList,kindList,document.data()['price']);
                                     },
                                       child: PriceCard(document.data()['price_kind'], document.data()['quantity'].toString(),document.data()['unit'].toString(), document.data()['price']));
                                 }).toList(),
@@ -471,7 +470,7 @@ class _EditProductState extends State<EditProduct> {
                      child: RaisedButton(
                        onPressed: () async {
                          FocusScope.of(context).requestFocus(FocusNode());
-                         showAddBottomsheet(context,productId,"", unitList,kindList);
+                         showAddBottomsheet(context,productId,"", unitList,kindList,"");
                          priceController.text="";
                          quantityController.text="";
                        },
@@ -494,7 +493,8 @@ class _EditProductState extends State<EditProduct> {
                      ),
                    ),
                      productId==""?SizedBox():SizedBox(height: 10,),
-                   productId==""?SizedBox(height: 10,): RaisedButton(
+                   productId==""?SizedBox(height: 10,):
+                   RaisedButton(
                       onPressed: (){
                         showDialog(
                           context: context,
@@ -659,8 +659,8 @@ class _EditProductState extends State<EditProduct> {
   ///**         ***     **  **      **
   ///**         ***     **  ******  *******
       ///to add price
-  showAddBottomsheet(BuildContext context,String productId,String document,List<String> unitlist,List<String> kindlist){
-
+  showAddBottomsheet(BuildContext context,String productId,String document,List<String> unitlist,List<String> kindlist,String oldPrice){
+    var uuid=Uuid();
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -816,7 +816,6 @@ class _EditProductState extends State<EditProduct> {
                                 String priceID=uuid.v4();
                                 print(priceID);
 
-
                                 if(quantityController.text=="" || priceController.text=="" || kindPrice=="" || unit==""){
                                   print('no data');
                                   Navigator.of(context).push(MaterialPageRoute(
@@ -846,6 +845,7 @@ class _EditProductState extends State<EditProduct> {
                                     print('kind'+kindPrice);
                                     print('unit'+unit);
                                     print('productId'+productId);
+
                                     PriceModel pricemodel = PriceModel(
                                         id: document,
                                         unit: unit,
@@ -855,6 +855,20 @@ class _EditProductState extends State<EditProduct> {
                                     );
                                     FirestoreService().editPrice(
                                         'price', productId, pricemodel);
+
+                                    UpdatePriceModel updatePriceModel=UpdatePriceModel(
+                                      id:uuid.v4(),
+                                      kind: kindPrice,
+                                      quantity: int.parse(quantityController.text),
+                                      unit: unit,
+                                      prodctName: productName,
+                                      productPhoto: productImage,
+                                      oldPrice:oldPrice,
+                                      newPrice: priceController.text,
+                                      createdDate: DateTime.now().millisecondsSinceEpoch
+                                    );
+                                    FirestoreService().addUpdatedPrice(updatePriceModel);
+
                                   }
                                 }
 

@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uni_pharmacy/models/CategoryModel.dart';
+import 'package:uni_pharmacy/models/NotiModel.dart';
 import 'package:uni_pharmacy/models/OrderModel.dart';
 import 'package:uni_pharmacy/models/PriceModel.dart';
 import 'package:uni_pharmacy/models/ProductModel.dart';
+import 'package:uni_pharmacy/models/UpdatPrice.dart';
 import 'package:uni_pharmacy/models/product_model.dart';
 import 'package:uni_pharmacy/models/user_model.dart';
 
@@ -112,6 +114,13 @@ class FirestoreService {
         .catchError((error)=> print("failed to update $collectionName"));
   }
 
+  Future<void> addUpdatedPrice(UpdatePriceModel updatePriceModel) {
+    CollectionReference collectionReference= _db.collection('updatedPrice');
+    collectionReference.doc(updatePriceModel.id )
+        .set(updatePriceModel.toMap()).then((value) => print("updatedPrice update"))
+        .catchError((error)=> print("failed to update updatedPrice"));
+  }
+
   Future<void> removePrice(String collectionName,String productId, String id) {
     CollectionReference users = _db.collection('product').doc(productId).collection(collectionName);
     return users
@@ -121,7 +130,6 @@ class FirestoreService {
         .catchError(
             (error) => print("Failed to delete $collectionName: $error"));
   }
-
 
   Future<void> addOrder (String collectionName,String userId,OrderModel orderModel){
     CollectionReference collectionReference= _db.collection('user').doc(userId).collection(collectionName);
@@ -135,6 +143,7 @@ class FirestoreService {
         .update(orderModel.toMap()).then((value) => print("$collectionName update"))
         .catchError((error)=> print("failed to update $collectionName"));
   }
+
   Future<void> removeOrder(String collectionName,String userId, String id) {
     CollectionReference users = _db.collection('user').doc(userId).collection(collectionName);
     return users
@@ -152,7 +161,6 @@ class FirestoreService {
         .catchError((error)=> print("failed to update $collectionName"));
   }
 
-
   Future<void> removeVoucherOrder(String collectionName,String voucherId, String id) {
     CollectionReference users = _db.collection('voucher').doc(voucherId).collection(collectionName);
     return users
@@ -163,5 +171,21 @@ class FirestoreService {
             (error) => print("Failed to delete $collectionName: $error"));
   }
 
+  Future<void> addNoti (String userId,NotiModel notiModel){
+    CollectionReference collectionReference= _db.collection('user').doc(userId).collection("noti");
+    collectionReference.doc(notiModel.notiId)
+        .set(notiModel.toMap()).then((value) => print("noti added"))
+        .catchError((error)=> print("failed to add noti"));
+
+    FirebaseFirestore.instance.collection("user").doc(userId).get().then((DocumentSnapshot document) {
+      int notiCount=int.parse(document.data()['noti_count'].toString());
+      print("notiCOunt"+notiCount.toString());
+      FirebaseFirestore.instance.collection('user').doc(userId)
+          .update({'noti_count': ++notiCount})
+          .then((value) => print("User Updated"))
+          .catchError((error) => print("Failed to update user: $error"));
+    });
+
+  }
 
 }

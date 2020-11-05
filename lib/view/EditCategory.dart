@@ -23,11 +23,14 @@ class EditCategory extends StatefulWidget {
 }
 
 class _EditCategoryState extends State<EditCategory> {
+  ScrollController _controller = new ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        toolbarHeight: 70,
         leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_rounded),
             onPressed: (){
@@ -46,12 +49,58 @@ class _EditCategoryState extends State<EditCategory> {
               } if(snapshot.connectionState== ConnectionState.waiting) {
                 return CircularProgressIndicator();
               }
-              return new GridView(
+              return  new ListView(
+                shrinkWrap: true,
+                controller: _controller,
+                children: snapshot.data.docs.map((DocumentSnapshot document) {
+                  return InkWell(
+                    onTap: (){
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> CRUD_Category(document.data()['category_image'],document.data()['category_name'],document.data()['id'])));
 
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,
-                      mainAxisSpacing: 5,
-                      crossAxisSpacing: 10),
-              children: snapshot.data.docs.map((DocumentSnapshot document) => CategoryCard(document.data()['category_name'],document.data()['category_image'],document.data()['id']),).toList(),
+                    },
+                    child: new  Container(
+                      padding: EdgeInsets.all(0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 33.0,
+                            padding: EdgeInsets.symmetric(horizontal: 3),
+                            child: Text(
+                              document.data()['category_name'],
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: Constants.PrimaryFont,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 5.0,),
+                          Container(
+                            child: CachedNetworkImage(
+                              imageUrl: document.data()['category_image'],
+                              fit: BoxFit.cover,
+                              imageBuilder: (context, imageProvider) => Container(
+                                height: 120.0,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(9),
+                                  border:Border.all(color: Colors.black,width: 1),
+                                  image: DecorationImage(
+                                      image: imageProvider, fit: BoxFit.cover),
+                                ),
+                              ),
+                              placeholder: (context, url) => Container(height: 100, child: Center(child: CircularProgressIndicator())),
+                              errorWidget: (context, url, error) => Icon(Icons.error),
+                            ),
+                          ),
+                          SizedBox(height: 10.0,)
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
               );
             }),
       ),
@@ -131,7 +180,16 @@ class _CRUD_CategoryState extends State<CRUD_Category> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(title: Text('Edit Category'),backgroundColor: Constants.primaryColor,),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        toolbarHeight: 70,
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_rounded),
+            onPressed: (){
+              Navigator.pop(context);
+            }
+        ),
+        title: Text('Edit Category'),backgroundColor: Constants.primaryColor,),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(10),

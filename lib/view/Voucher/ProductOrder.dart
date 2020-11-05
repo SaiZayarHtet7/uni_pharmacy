@@ -9,8 +9,6 @@ import 'package:uni_pharmacy/models/OrderModel.dart';
 import 'package:uni_pharmacy/service/firestore_service.dart';
 import 'package:uni_pharmacy/util/constants.dart';
 import 'package:uni_pharmacy/view/voucher/VoucherOrder.dart';
-import 'package:uni_pharmacy/view/VoucherPage.dart';
-import 'package:uni_pharmacy/view/Widget/TitleTextColor.dart';
 import 'package:uuid/uuid.dart';
 
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();

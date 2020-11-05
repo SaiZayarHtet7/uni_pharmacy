@@ -8,7 +8,6 @@ import 'package:uni_pharmacy/service/auth_service.dart';
 import 'package:uni_pharmacy/service/firestore_service.dart';
 import 'package:uni_pharmacy/util/constants.dart';
 
-
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
 class Register extends StatefulWidget {
@@ -34,35 +33,44 @@ class _RegisterState extends State<Register> {
       ),
       body: Stack(
         children: [
-          Container(
-            padding: EdgeInsets.all(10.0),
-            child:TextFormField(
-              style: TextStyle(
-                  fontSize: 17.0,
-                  fontFamily: Constants.PrimaryFont
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              color: Colors.white,
+              padding: EdgeInsets.all(0),
+              height: 50,
+              child: TextFormField(
+                keyboardType: TextInputType.name,
+                style: TextStyle(
+                    fontSize: 15.0, fontFamily: Constants.PrimaryFont),
+                onChanged: (value) {
+                  setState(() {
+                    searchName = value.toString();
+                  });
+                },
+                decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(2),
+                    hintText: 'အမည်ဖြင့်ရှာမည်',
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Constants.primaryColor,
+                    ),
+                    enabledBorder: new OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: new BorderSide(color: Colors.black,width: 1),
+                    ),
+                    focusedBorder: new OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: new BorderSide(color: Colors.black,width: 1),),
+                    border: new OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: new BorderSide(color: Colors.black,width: 1),
+                    )),
               ),
-              onChanged: (value){
-                setState(() {
-                  searchName=value.toString();
-                });
-              },
-              decoration: InputDecoration(
-                  hintText: '',
-                  prefixIcon: Icon(Icons.search,color: Constants.primaryColor,),
-                  enabledBorder: new OutlineInputBorder(
-                    borderSide:new BorderSide(color: Constants.primaryColor),
-                  ),
-                  focusedBorder: new OutlineInputBorder(
-                      borderSide: new BorderSide(color: Constants.primaryColor)
-                  ),
-                  border: new OutlineInputBorder(
-                    borderSide: new BorderSide(color: Constants.primaryColor),
-                  )
-              ) ,
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 70),
+            margin: EdgeInsets.only(top: 60),
             child: StreamBuilder<QuerySnapshot>(
                 stream:(searchName==""||searchName==null)?
                 FirestoreService().get('user'):
@@ -70,7 +78,7 @@ class _RegisterState extends State<Register> {
                             .collection('user').where("search_name", arrayContains: searchName).snapshots(),
                 builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot){
                   if(snapshot.hasError){
-                    return Text('Something went wrong in slide');
+                    return Text('Something went wrong in user');
                   }
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator(backgroundColor: Constants.primaryColor,));
@@ -517,7 +525,6 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
                                       print(response.additionalUserInfo);
                                       print(response.toString());
                                       String uid=response.user.uid.toString();
-                                      
                                       ///User info saving in firebase
                                       
                                       UserModel model =UserModel(
@@ -530,7 +537,12 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
                                         profileImage:"",
                                         token: "",
                                         userName: nameController.text,
-                                        searchName: setSearchParam(nameController.text)
+                                        searchName: setSearchParam(nameController.text),
+                                        isNewChat: "new",
+                                        finalChatDateTime: DateTime.now().millisecondsSinceEpoch,
+                                        status:'',
+                                        notiCount:'0',
+                                        messageNoti:0
                                       );
                                       print('$model');
                                       
@@ -575,9 +587,6 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
                                     });
                                     
                                   }
-                                
-                                
-
                               },
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0),),
                               padding: EdgeInsets.all(0.0),

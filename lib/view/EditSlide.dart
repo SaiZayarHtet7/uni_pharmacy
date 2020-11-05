@@ -11,7 +11,7 @@ import 'package:uni_pharmacy/service/firestore_service.dart';
 import 'package:uni_pharmacy/util/constants.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as Path;
-import 'package:uni_pharmacy/view/home_page.dart';
+import 'package:uni_pharmacy/view/DashBoard.dart';
 import 'package:uuid/uuid.dart';
 
 class EditSlide extends StatefulWidget {
@@ -101,7 +101,7 @@ class _EditSlideState extends State<EditSlide> {
 
 
   Future<bool> _onWillPop() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(0)));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashBoard()));
   }
   @override
   Widget build(BuildContext context) {
@@ -112,7 +112,7 @@ class _EditSlideState extends State<EditSlide> {
         title: Text('အလှဓါတ်ပုံများ',),backgroundColor: Constants.primaryColor,
       leading: IconButton(
         icon:Icon( Icons.arrow_back_ios_rounded),
-        onPressed: ()=>Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(0)))
+        onPressed: ()=>Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => DashBoard()))
       ),),
           body: SafeArea(
             child:Stack(

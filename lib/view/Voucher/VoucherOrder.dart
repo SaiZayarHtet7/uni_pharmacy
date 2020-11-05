@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uni_pharmacy/models/NotiModel.dart';
 import 'package:uni_pharmacy/service/NotiService.dart';
 import 'package:uni_pharmacy/service/firestore_service.dart';
 import 'package:uni_pharmacy/util/constants.dart';
@@ -14,7 +15,7 @@ import 'package:uni_pharmacy/view/Widget/TextData.dart';
 import 'package:uni_pharmacy/view/Widget/TextDataColor.dart';
 import 'package:uni_pharmacy/view/Widget/TitleText.dart';
 import 'package:uni_pharmacy/view/Widget/TitleTextColor.dart';
-import 'package:uni_pharmacy/view/home_page.dart';
+import 'package:uuid/uuid.dart';
 
 
 class VoucherOrder extends StatefulWidget {
@@ -33,9 +34,10 @@ class _VoucherOrderState extends State<VoucherOrder> {
   _VoucherOrderState(this.voucherId,this.voucherNumber);
   String date;
   bool isLoading;
+  var uuid=Uuid();
   double totalCost;
   int orderCount;
-  String status,userName,userId,voucherDate,voucherTime,voucherToken;
+  String status,userName,userId,voucherDate,voucherTime,voucherToken,voucherUserId;
   final ScrollController scrollController = ScrollController();
 
   ///for initstate
@@ -81,9 +83,10 @@ class _VoucherOrderState extends State<VoucherOrder> {
               setState(() {
                 status= value.data()['status'].toString();
                 voucherDate=value.data()['date_time'].toString().substring(0,10);
-                voucherTime=value.data()['date_time'].toString().substring(11,16);
+                voucherTime=value.data()['date_time'].toString().substring(11,value.data()['date_time'].toString().length);
                 voucherName=value.data()['user_name'].toString();
                 voucherToken=value.data()['token'].toString();
+                voucherUserId=value.data()['user_id'].toString();
                 print(voucherName);
               });
             }
@@ -93,6 +96,7 @@ class _VoucherOrderState extends State<VoucherOrder> {
 
   Future<bool> _onWillPop() async {
     print("hello back key");
+    Navigator.of(context).pop();
   }
 
 
@@ -108,6 +112,7 @@ class _VoucherOrderState extends State<VoucherOrder> {
 
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 70,
         automaticallyImplyLeading: false,
         leading: IconButton(icon: Icon(Icons.arrow_back_ios,color: Colors.white,), onPressed: (){
           Navigator.of(context).pop();
@@ -142,7 +147,7 @@ class _VoucherOrderState extends State<VoucherOrder> {
                     Expanded( flex: 1,
                         child: SizedBox()),
                     Expanded(flex: 2,
-                        child: Center(child: TitleTextColor("အချိန်(hh:mm)", Constants.thirdColor))),
+                        child: Center(child: TitleTextColor("အချိန်", Constants.thirdColor))),
                   ],
                 ),
                 SizedBox(height: 10.0,),
@@ -150,11 +155,11 @@ class _VoucherOrderState extends State<VoucherOrder> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(flex: 1,
+                    Expanded(flex: 2,
                         child: Center(child: TextData(voucherDate))),
                     Expanded( flex: 1,
                         child: SizedBox()),
-                    Expanded(flex: 1,
+                    Expanded(flex: 2,
                         child: Center(child: TextData(voucherTime))),
                   ],
                 ),
@@ -187,7 +192,7 @@ class _VoucherOrderState extends State<VoucherOrder> {
                                     DataColumn(label: TextDataColor('အမျိုးအမည်')),
                                     DataColumn(label: TextDataColor('အရေအတွက်')),
                                     DataColumn(label: TextDataColor('ယူနစ်')),
-                                    DataColumn(label: Container(width:100,child:Text("သင့်ငွေ",textAlign: TextAlign.center,style: TextStyle(color: Constants.thirdColor,fontSize: 13,fontFamily: Constants.PrimaryFont)),)),
+                                    DataColumn(label: Expanded(child: Align(alignment:Alignment.centerRight, child: Text("သင့်ငွေ",textAlign: TextAlign.center,style: TextStyle(color: Constants.thirdColor,fontSize: 13,fontFamily: Constants.PrimaryFont))))),
                                     DataColumn(label: Text('')),
                                     DataColumn(label: Text('')),
                                   ],
@@ -195,11 +200,12 @@ class _VoucherOrderState extends State<VoucherOrder> {
                                     return DataRow(
                                         cells: [
                                           DataCell(TextData(data.data()['product_name'])),
-                                          DataCell(Center(child: TextData(data.data()['quantity']))),
-                                          DataCell(Center(child: TextData(data.data()['unit']))),
+                                          DataCell(Align(alignment: Alignment.centerRight,child: TextData(data.data()['quantity']))),
+                                          DataCell(Align(alignment: Alignment.centerLeft,child: TextData(data.data()['unit']))),
                                           DataCell(Align(
                                               alignment: Alignment.centerRight,
-                                              child: Text(Constants().oCcy.format(double.parse(data.data()['cost'])).toString() + ".00 ကျပ်", style: TextStyle(color: Constants.primaryColor, fontFamily: Constants.PrimaryFont, fontSize: 14),))),
+                                              child: Container(padding:EdgeInsets.only(left:10),
+                                                  child: Text(Constants().oCcy.format(double.parse(data.data()['cost'])).toString() + ".00", style: TextStyle(color: Constants.primaryColor, fontFamily: Constants.PrimaryFont, fontSize: 14),)))),
                                          status!=Constants.orderDeliver? DataCell(ClipOval(
                                             child: Material(
                                               color: Colors.blue,
@@ -267,7 +273,7 @@ class _VoucherOrderState extends State<VoucherOrder> {
                                                               NotiService().sendNoti('Order Cancel Alert','$userName မှ အော်ဒါ cancel ဖြစ်သွားသည်' ,voucherToken);
                                                               Fluttertoast.showToast(msg: "အော်ဒါ cancel ဖြစ်သွားသည်" ,toastLength: Toast.LENGTH_LONG,backgroundColor: Constants.thirdColor);
                                                               Navigator.pop(context);
-                                                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(3)));
+                                                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OrderPage()));
                                                             }else {
                                                               totalCost = totalCost -
                                                                   double.parse(
@@ -362,8 +368,16 @@ class _VoucherOrderState extends State<VoucherOrder> {
                                     print("onError");
                                   });
                                 });
-                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(3)));
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OrderPage()));
                                 NotiService().sendNoti("Voucher No-${convertVoucher(voucherNumber)}", "ပစ္စည်းများကို ပို့ပေးလိုက်ပြီး ဖြစ်ပါသည် \n ဝယ်ယူအားပေမူအတွက် အထူးကျေးဇူးတင်ရှိပါသည်", voucherToken);
+                                NotiModel notiModel=NotiModel(
+                                  notiId: uuid.v4(),
+                                  notiTitle: "Voucher No-${convertVoucher(voucherNumber)}",
+                                  notiText: "ပစ္စည်းများကို ပို့ပေးလိုက်ပြီး ဖြစ်ပါသည်။ ဝယ်ယူအားပေးမူအတွက် အထူးကျေးဇူးတင်ရှိပါသည်။",
+                                  dateTime: DateTime.now().millisecondsSinceEpoch,
+                                  type: "sendOrder"
+                                );
+                                FirestoreService().addNoti(voucherUserId, notiModel);
                                 Fluttertoast.showToast(msg: "ပစ္စည်းပို့ပြီး" ,toastLength: Toast.LENGTH_LONG,backgroundColor: Constants.thirdColor);
                               },
                             ),
@@ -402,70 +416,153 @@ class _VoucherOrderState extends State<VoucherOrder> {
                   ),
                 ),
                 SizedBox(height: 20.0,),
-               status==Constants.orderDeliver? SizedBox(): Container(
-                  height: 50.0,
-                  child: RaisedButton(
-                    onPressed: () async {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text( 'အော်ဒါကို ပယ်ဖျက်ရန် သေချာပါသလား?',
-                              style: new TextStyle(
-                                  fontSize: 20.0, color: Constants.thirdColor,fontFamily: Constants.PrimaryFont)),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: Text('ဖျက်မည်',
-                                  style: new TextStyle(
-                                      fontSize: 16.0,
-                                      color: Constants.primaryColor,
-                                      fontFamily: Constants.PrimaryFont
+               status==Constants.orderDeliver? SizedBox():
+               Container(
+                 padding: EdgeInsets.symmetric(horizontal:10),
+                 child: RaisedButton(
+                   onPressed: (){
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text( 'အော်ဒါကို ပယ်ဖျက်ရန် သေချာပါသလား?',
+                                    style: new TextStyle(
+                                        fontSize: 20.0, color: Constants.thirdColor,fontFamily: Constants.PrimaryFont)),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text('ဖျက်မည်',
+                                        style: new TextStyle(
+                                            fontSize: 16.0,
+                                            color: Constants.primaryColor,
+                                            fontFamily: Constants.PrimaryFont
+                                        ),
+                                        textAlign: TextAlign.right),
+                                    onPressed: () async {
+                                      setState(() {
+                                        FirestoreService().remove("voucher", voucherId);
+                                        NotiService().sendNoti('Voucher No-${convertVoucher(voucherNumber)}','ပစ္စည်းပြတ်လတ်နေပါသည်' ,voucherToken);
+                                        NotiModel notiModel=NotiModel(
+                                            notiId: uuid.v4(),
+                                            notiTitle: "Voucher No-${convertVoucher(voucherNumber)}",
+                                            notiText: "ပစ္စည်းပြတ်လတ်နေပါသည်။",
+                                            dateTime: DateTime.now().millisecondsSinceEpoch,
+                                            type: "cancelOrder"
+                                        );
+                                        FirestoreService().addNoti(voucherUserId, notiModel);
+                                        Fluttertoast.showToast(msg: "အော်ဒါ cancel ဖြစ်သွားသည်" ,toastLength: Toast.LENGTH_LONG,backgroundColor: Constants.thirdColor);
+                                        Navigator.pop(context);
+                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OrderPage()));
+                                      });
+                                      Fluttertoast.showToast(msg: "ဖျက်ပြီးပါပြီ" ,toastLength: Toast.LENGTH_LONG,backgroundColor: Constants.thirdColor);
+                                    },
                                   ),
-                                  textAlign: TextAlign.right),
-                              onPressed: () async {
-                                setState(() {
-                                  FirestoreService().remove("voucher", voucherId);
-                                  NotiService().sendNoti('Voucher No-${convertVoucher(voucherNumber)}','ပစ္စည်းပြတ်လတ်နေပါသည်' ,voucherToken);
-                                  Fluttertoast.showToast(msg: "အော်ဒါ cancel ဖြစ်သွားသည်" ,toastLength: Toast.LENGTH_LONG,backgroundColor: Constants.thirdColor);
-                                  Navigator.pop(context);
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage(3)));
-                                });
-                                Fluttertoast.showToast(msg: "ဖျက်ပြီးပါပြီ" ,toastLength: Toast.LENGTH_LONG,backgroundColor: Constants.thirdColor);
-                              },
-                            ),
-                            FlatButton(
-                              child: Text('Cancel',
-                                  style: new TextStyle(
-                                      fontSize: 16.0,
-                                      color: Constants.primaryColor,
-                                      fontFamily: Constants.PrimaryFont
-                                  ),
-                                  textAlign: TextAlign.right),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0),),
-                    padding: EdgeInsets.all(0.0),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: [Hexcolor('#fd9346'),Constants.primaryColor,Hexcolor('#fd9346'),],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(30.0)
-                      ),
-                      child: Container(
-                        constraints: BoxConstraints(minHeight: 50.0),
-                        alignment: Alignment.center,
-                        child: Text('အော်ဒါကို ဖျက်မည်',style: TextStyle(color: Colors.white,fontSize: 18.0,fontFamily:Constants.PrimaryFont),),
-                      ),
-                    ),
-                  ),
-                ),
+                                  FlatButton(
+                                    child: Text('မဖျက်ပါ',
+                                        style: new TextStyle(
+                                            fontSize: 16.0,
+                                            color: Constants.primaryColor,
+                                            fontFamily: Constants.PrimaryFont
+                                        ),
+                                        textAlign: TextAlign.right),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ],
+                              ),
+                            );
+
+                   },
+                   padding: EdgeInsets.all(0.0),
+                   child: Ink(
+                     decoration: BoxDecoration(color: Colors.white),
+                     child: Container(
+                       constraints: BoxConstraints(minHeight: 50.0),
+                       alignment: Alignment.center,
+                       child: Text('အော်ဒါကို ပယ်ဖျက်မည်', style: TextStyle(color: Constants.primaryColor,fontSize: 18.0,fontFamily:Constants.PrimaryFont),
+                       ),
+                     ),
+                   ),
+                   textColor: Colors.white,
+                   shape: RoundedRectangleBorder(side: BorderSide(
+                       color: Constants.primaryColor,
+                       width: 1,
+                       style: BorderStyle.solid
+                   ), borderRadius: BorderRadius.circular(80)),
+                 ),
+               ),
+
+               // Container(
+               //    height: 50.0,
+               //    child: RaisedButton(
+               //      onPressed: () async {
+               //        showDialog(
+               //          context: context,
+               //          builder: (context) => AlertDialog(
+               //            title: Text( 'အော်ဒါကို ပယ်ဖျက်ရန် သေချာပါသလား?',
+               //                style: new TextStyle(
+               //                    fontSize: 20.0, color: Constants.thirdColor,fontFamily: Constants.PrimaryFont)),
+               //            actions: <Widget>[
+               //              FlatButton(
+               //                child: Text('ဖျက်မည်',
+               //                    style: new TextStyle(
+               //                        fontSize: 16.0,
+               //                        color: Constants.primaryColor,
+               //                        fontFamily: Constants.PrimaryFont
+               //                    ),
+               //                    textAlign: TextAlign.right),
+               //                onPressed: () async {
+               //                  setState(() {
+               //                    FirestoreService().remove("voucher", voucherId);
+               //                    NotiService().sendNoti('Voucher No-${convertVoucher(voucherNumber)}','ပစ္စည်းပြတ်လတ်နေပါသည်' ,voucherToken);
+               //                    NotiModel notiModel=NotiModel(
+               //                        notiId: uuid.v4(),
+               //                        notiTitle: "Voucher No-${convertVoucher(voucherNumber)}",
+               //                        notiText: "ပစ္စည်းပြတ်လတ်နေပါသည်။",
+               //                        dateTime: DateTime.now().millisecondsSinceEpoch,
+               //                        type: "cancelOrder"
+               //                    );
+               //                    FirestoreService().addNoti(voucherUserId, notiModel);
+               //                    Fluttertoast.showToast(msg: "အော်ဒါ cancel ဖြစ်သွားသည်" ,toastLength: Toast.LENGTH_LONG,backgroundColor: Constants.thirdColor);
+               //                    Navigator.pop(context);
+               //                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OrderPage()));
+               //                  });
+               //                  Fluttertoast.showToast(msg: "ဖျက်ပြီးပါပြီ" ,toastLength: Toast.LENGTH_LONG,backgroundColor: Constants.thirdColor);
+               //                },
+               //              ),
+               //              FlatButton(
+               //                child: Text('မဖျက်ပါ',
+               //                    style: new TextStyle(
+               //                        fontSize: 16.0,
+               //                        color: Constants.primaryColor,
+               //                        fontFamily: Constants.PrimaryFont
+               //                    ),
+               //                    textAlign: TextAlign.right),
+               //                onPressed: () {
+               //                  Navigator.pop(context);
+               //                },
+               //              )
+               //            ],
+               //          ),
+               //        );
+               //      },
+               //      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0),),
+               //      padding: EdgeInsets.all(0.0),
+               //      child: Ink(
+               //        decoration: BoxDecoration(
+               //            gradient: LinearGradient(colors: [Hexcolor('#fd9346'),Constants.primaryColor,Hexcolor('#fd9346'),],
+               //              begin: Alignment.topLeft,
+               //              end: Alignment.bottomRight,
+               //            ),
+               //            borderRadius: BorderRadius.circular(30.0)
+               //        ),
+               //        child: Container(
+               //          constraints: BoxConstraints(minHeight: 50.0),
+               //          alignment: Alignment.center,
+               //          child: Text('အော်ဒါကို ပယ်ဖျက်မည်',style: TextStyle(color: Colors.white,fontSize: 18.0,fontFamily:Constants.PrimaryFont),),
+               //        ),
+               //      ),
+               //    ),
+               //  ),
               ],
           ),
             ),

@@ -14,7 +14,7 @@ import 'package:uni_pharmacy/providers/Connectivity.dart';
 import 'package:uni_pharmacy/service/auth_service.dart' as auth;
 import 'package:uni_pharmacy/testing/product.dart';
 import 'package:uni_pharmacy/util/constants.dart';
-import 'package:uni_pharmacy/view/home_page.dart';
+import 'package:uni_pharmacy/view/DashBoard.dart';
 
 
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -243,7 +243,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
                                                     print("User Updated");
                                                     Navigator.pushReplacement(
                                                       context,
-                                                      MaterialPageRoute(builder: (context) => HomePage(0)),
+                                                      MaterialPageRoute(builder: (context) => DashBoard()),
                                                     );
                                                   })
                                                       .catchError((error) { setState(() {

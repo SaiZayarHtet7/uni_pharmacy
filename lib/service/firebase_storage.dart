@@ -41,8 +41,9 @@ Future<String> UploadPhoto(String path,File image) async{
       });
         });
  }
+
  Future <String> EditPhoto(String delimageUrl,String path,File image) async{
-   DeletePhoto(delimageUrl);
+
    return await UploadPhoto(path, image);
 }
 

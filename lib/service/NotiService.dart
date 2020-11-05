@@ -1,6 +1,3 @@
-
-
-
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,12 +20,12 @@ Future<void> sendNoti(String title,String body,String token) async {
           "title": "$title",
           "sound": 'default',
           "android_channel_id": "id",
-          "image": "https://firebasestorage.googleapis.com/v0/b/unipharmacy-a5219.appspot.com/o/viber_image_2020-09-12_17-23-52.jpg?alt=media&token=b7f5a606-9063-4401-9946-d5a0aeb62302"
+          "image": "https://firebasestorage.googleapis.com/v0/b/unipharmacy-a5219.appspot.com/o/logo.png?alt=media&token=cba61f0e-49d5-4475-a420-e1dc7cd6e4d9"
         },
         "priority": "high",
         "collapse_key" : "type_a",
         "data": {
-          "clickaction": "FLUTTERNOTIFICATIONCLICK",
+          "click_action": "FLUTTER_NOTIFICATION_CLICK",
           "id": "1",
           "status": "done"
         },
