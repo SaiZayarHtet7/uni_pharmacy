@@ -108,7 +108,7 @@ class _EditProductState extends State<EditProduct> {
     List<String> caseSearchList = List();
     String temp = "";
     for (int i = 0; i < caseNumber.length; i++) {
-      temp = temp + caseNumber[i];
+      temp = temp + caseNumber[i].toLowerCase();
       caseSearchList.add(temp);
     }
     return caseSearchList;
@@ -139,7 +139,7 @@ class _EditProductState extends State<EditProduct> {
           key: _scaffoldKey,
           appBar: AppBar(
             automaticallyImplyLeading: false,
-              title: Text('Edit Product'),backgroundColor: Constants.primaryColor,
+              title: Text(productId==""?'ဆေးပစ္စည်းအသစ် ထည့်မည်': 'ဆေးပစ္စည်း ပြင်ဆင်မည်'),backgroundColor: Constants.primaryColor,
            leading: IconButton(
                 icon:Icon( Icons.arrow_back_ios_rounded),
                 onPressed: (){if(productId=="" || productId==null){
@@ -384,7 +384,7 @@ class _EditProductState extends State<EditProduct> {
                                 ProductModel product = ProductModel(
                                   productId:productId,
                                   productName: productName,
-                                  productSearch: setSearchParam(productName),
+                                  productSearch: setSearchParam(productName.toLowerCase()),
                                   productImage: productImage,
                                   category:newCategory.toString(),
                                   discount: "",
@@ -418,7 +418,7 @@ class _EditProductState extends State<EditProduct> {
                               ProductModel product = ProductModel(
                                 productId:productId,
                                 productName: productName,
-                                productSearch: setSearchParam(productName),
+                                productSearch: setSearchParam(productName.toLowerCase()),
                                 productImage: productImage,
                                 category:categorySelected,
                                 discount: "",

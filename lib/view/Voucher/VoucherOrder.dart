@@ -382,7 +382,7 @@ class _VoucherOrderState extends State<VoucherOrder> {
                               },
                             ),
                             FlatButton(
-                              child: Text('Cancel',
+                              child: Text('မပို့သေးပါ',
                                   style: new TextStyle(
                                       fontSize: 16.0,
                                       color: Constants.primaryColor,

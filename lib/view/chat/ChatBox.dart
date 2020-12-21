@@ -198,7 +198,7 @@ class _ChatBoxState extends State<ChatBox> {
                         fontSize: 15.0, fontFamily: Constants.PrimaryFont),
                     onChanged: (value) {
                       setState(() {
-                        searchName = value.toString();
+                        searchName = value.toString().toLowerCase();
                       });
                     },
                     decoration: InputDecoration(
@@ -374,7 +374,7 @@ class _HeaderOnlyState extends State<HeaderOnly> {
                 errorWidget: (context, url, error) => Icon(Icons.error),
               ),
               SizedBox(height: 10.0,),
-              Text("Uni Pharmacy",style: TextStyle(color:Colors.white,fontSize: 16,fontFamily: Constants.PrimaryFont),)
+              Text("UNI Pharmacy",style: TextStyle(color:Colors.white,fontSize: 16,fontFamily: Constants.PrimaryFont),)
             ],
           ),
         ),

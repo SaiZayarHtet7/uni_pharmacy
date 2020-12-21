@@ -22,7 +22,7 @@ Future<void> main() async {
     image: Image.asset('assets/image/logoCircle.png',),
 
     backgroundColor:Constants.primaryColor,
-    title: Text('Uni Pharmacy application မှ ကြိုဆိုပါသည်',style: TextStyle(color: Colors.white,fontFamily: Constants.PrimaryFont),),
+    title: Text('UNI Pharmacy application မှ ကြိုဆိုပါသည်',style: TextStyle(color: Colors.white,fontFamily: Constants.PrimaryFont),),
     photoSize: 100,
     loaderColor: Colors.white ,
   ),));

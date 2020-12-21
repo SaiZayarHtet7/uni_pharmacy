@@ -37,7 +37,7 @@ class _SettingPageState extends State<SettingPage> {
                                     fontSize: 20.0, color: Constants.thirdColor,fontFamily: Constants.PrimaryFont)),
                             actions: <Widget>[
                               FlatButton(
-                                child: Text('Logout',
+                                child: Text('ထွက်မည်',
                                     style: new TextStyle(
                                         fontSize: 16.0,
                                         color: Constants.primaryColor,
@@ -65,7 +65,7 @@ class _SettingPageState extends State<SettingPage> {
                                 },
                               ),
                               FlatButton(
-                                child: Text('Cancel',
+                                child: Text('မထွက်ပါ',
                                     style: new TextStyle(
                                         fontSize: 16.0,
                                         color: Constants.primaryColor,

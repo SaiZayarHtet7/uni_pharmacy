@@ -28,7 +28,7 @@ class _RegisterState extends State<Register> {
               Navigator.pop(context);
             }
         ),
-        title: Text('Account list'),
+        title: Text('အကောင့် စာရင်း'),
         backgroundColor: Constants.primaryColor,
       ),
       body: Stack(
@@ -45,7 +45,7 @@ class _RegisterState extends State<Register> {
                     fontSize: 15.0, fontFamily: Constants.PrimaryFont),
                 onChanged: (value) {
                   setState(() {
-                    searchName = value.toString();
+                    searchName = value.toString().toLowerCase();
                   });
                 },
                 decoration: InputDecoration(
@@ -98,7 +98,7 @@ class _RegisterState extends State<Register> {
                                 onTap: (){
                                   Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => EditRegister(document.data()['user_name'],document.data()['phone_number'],document.data()['address'],document.data()['email']))
+                                      MaterialPageRoute(builder: (context) => EditRegister(document.data()['uid'],document.data()['user_name'],document.data()['phone_number'],document.data()['address'],document.data()['email']))
                                   );
                                 },
                                 child: Container(
@@ -183,7 +183,7 @@ class _RegisterState extends State<Register> {
         onPressed: (){
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => EditRegister("","","",""))
+            MaterialPageRoute(builder: (context) => EditRegister("","","","",""))
           );
         },
         child: Icon(Icons.add,color: Colors.white,),
@@ -194,11 +194,11 @@ class _RegisterState extends State<Register> {
 }
 
 class EditRegister extends StatefulWidget {
-  final String userName,phoneNumber,address,email;
+  final String userId,userName,phoneNumber,address,email;
 
-  const EditRegister(this.userName, this.phoneNumber, this.address, this.email);
+  const EditRegister(this.userId,this.userName, this.phoneNumber, this.address, this.email);
   @override
-  _EditRegisterState createState() => _EditRegisterState(userName,phoneNumber,address,email);
+  _EditRegisterState createState() => _EditRegisterState(userId,userName,phoneNumber,address,email);
 }
 
 class _EditRegisterState extends State<EditRegister> with TickerProviderStateMixin {
@@ -210,10 +210,10 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
   final addressController=TextEditingController();
   final phoneController=TextEditingController();
   bool loading;
-  String userName="",phoneNumber="",address="",email="";
+  String userName="",phoneNumber="",address="",email="",userId="";
   bool pass_visibility,conpass_visibility,readOnly;
 
-  _EditRegisterState(this.userName, this.phoneNumber, this.address, this.email);
+  _EditRegisterState(this.userId,this.userName, this.phoneNumber, this.address, this.email);
 
   @override
   void initState() {
@@ -288,7 +288,7 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
     List<String> caseSearchList = List();
     String temp = "";
     for (int i = 0; i < caseNumber.length; i++) {
-      temp = temp + caseNumber[i];
+      temp = temp + caseNumber[i].toLowerCase();
       caseSearchList.add(temp);
     }
     return caseSearchList;
@@ -307,7 +307,7 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
               Navigator.pop(context);
             }
         ),
-        title: Text('Registration'),
+        title: Text(userName==""? 'အကောင့်အသစ် ပြုလုပ်ခြင်း':'အကောင့် အချက်အလက်များ'),
         backgroundColor: Constants.primaryColor,
       ),
       body: SafeArea(
@@ -322,7 +322,6 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
                     children: [
                       SizedBox(height: 10.0,),
                       TextFormField(
-                        readOnly: readOnly,
                         controller: nameController,
                         validator: validateName,
                         style: TextStyle(
@@ -347,10 +346,8 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
                       ),
                       SizedBox(height: 10.0,),
                       TextFormField(
-                        readOnly: readOnly,
-                        controller: phoneController ,
+                        controller: phoneController,
                         keyboardType: TextInputType.phone,
-
                         validator: validatePhone,
                         style: TextStyle(
                             fontSize: 17.0,
@@ -374,7 +371,6 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
                       ),
                       SizedBox(height: 10.0,),
                       TextFormField(
-                        readOnly: readOnly,
                         controller: addressController ,
                         validator: validateAddress,
                         style: TextStyle(
@@ -465,7 +461,6 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
                         ),
                         decoration: InputDecoration(
                             labelText: 'အတည်ပြု စကားဝှက်',
-
                             labelStyle: TextStyle(fontFamily: Constants.PrimaryFont,color: Colors.black),
                             hintText: '',
                             prefixIcon: Icon(Icons.lock,color: Constants.primaryColor,),
@@ -498,7 +493,7 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
                             child: RaisedButton(
                               color: Colors.white,
                               elevation: 0,
-                              child: Text('Cancel',style: TextStyle(color: Constants.primaryColor,fontSize: 18.0,fontFamily:Constants.PrimaryFont),),
+                              child: Text('နောက်ပြန်သွား',style: TextStyle(color: Constants.primaryColor,fontSize: 18.0,fontFamily:Constants.PrimaryFont),),
                               shape: new RoundedRectangleBorder(
                                   borderRadius: new BorderRadius.circular(25.0),
                                   side: BorderSide(color: Constants.primaryColor)
@@ -507,8 +502,8 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
                             },
                             ),
                           ),
-                          readOnly==true?SizedBox():SizedBox(width: 10.0,),
-                          readOnly==true?SizedBox():Container(
+                         SizedBox(width: 10.0,),
+                          Container(
                             height: 50.0,
                             width: 150,
                             child: RaisedButton(
@@ -518,68 +513,141 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
                                       loading=true;
                                     });
                                     ///Registering Firebase Auth
-                                      FirebaseAuth _auth=FirebaseAuth.instance;
-                                    try {
-                                      UserCredential response = await _auth.createUserWithEmailAndPassword(
-                                          email: emailController.text, password: passwordController.text);
-                                      print(response.additionalUserInfo);
-                                      print(response.toString());
-                                      String uid=response.user.uid.toString();
-                                      ///User info saving in firebase
-                                      
-                                      UserModel model =UserModel(
-                                        uid: uid,
-                                        phoneNumber: phoneController.text,
-                                        address: addressController.text,
-                                        email: emailController.text,
-                                        isAdmin: false,
-                                        password: passwordController.text,
-                                        profileImage:"",
-                                        token: "",
-                                        userName: nameController.text,
-                                        searchName: setSearchParam(nameController.text),
-                                        isNewChat: "new",
-                                        finalChatDateTime: DateTime.now().millisecondsSinceEpoch,
-                                        status:'',
-                                        notiCount:'0',
-                                        messageNoti:0
-                                      );
-                                      print('$model');
-                                      
-                                      FirestoreService().registerUser('user', model);
-                                      _scaffoldKey.currentState
-                                          .showSnackBar(SnackBar(
-                                        content: Text('အောင်မြင်ပါသည်'),
-                                        duration: Duration(seconds: 3),
-                                        backgroundColor:Colors.greenAccent,
-                                      ));
-                                      Navigator.pop(context);
-                                      // response.user.uid
-                                    } on FirebaseAuthException catch (e) {
-                                      if(e.code == 'weak-password'){
-                                        _scaffoldKey.currentState
-                                            .showSnackBar(SnackBar(
-                                          content: Text("Password အားနဲနေသည်"),
-                                          duration: Duration(seconds: 3),
-                                          backgroundColor: Constants.emergencyColor,
-                                        ));
-                                      }else if(e.code=='email-already-in-use'){
-                                        _scaffoldKey.currentState
-                                            .showSnackBar(SnackBar(
-                                          content: Text("Email မှာအသုံးပြုပြီးသား ဖြစ်နေသည်"),
-                                          duration: Duration(seconds: 3),
-                                          backgroundColor: Constants.emergencyColor,
-                                        ));
+                                    FirebaseAuth _auth=FirebaseAuth.instance;
 
+                                    if(userName=="" || userName ==null){
+                                      try {
+                                        UserCredential response = await _auth.createUserWithEmailAndPassword(
+                                            email: emailController.text, password: passwordController.text);
+                                        print(response.additionalUserInfo);
+                                        print(response.toString());
+                                        String uid=response.user.uid.toString();
+                                        ///User info saving in firebase
+                                        UserModel model =UserModel(
+                                            uid: uid,
+                                            phoneNumber: phoneController.text,
+                                            address: addressController.text,
+                                            email: emailController.text,
+                                            isAdmin: false,
+                                            password: passwordController.text,
+                                            profileImage:"",
+                                            token: "",
+                                            userName: nameController.text,
+                                            searchName: setSearchParam(nameController.text.toLowerCase()),
+                                            isNewChat: "new",
+                                            finalChatDateTime: DateTime.now().millisecondsSinceEpoch,
+                                            status:'',
+                                            notiCount:'0',
+                                            messageNoti:0
+                                        );
+                                        print('$model');
+
+                                        FirestoreService().registerUser('user', model);
+                                        _scaffoldKey.currentState
+                                            .showSnackBar(SnackBar(
+                                          content: Text('အောင်မြင်ပါသည်'),
+                                          duration: Duration(seconds: 3),
+                                          backgroundColor:Colors.greenAccent,
+                                        ));
+                                        Navigator.pop(context);
+                                        // response.user.uid
+                                      } on FirebaseAuthException catch (e) {
+                                        if(e.code == 'weak-password'){
+                                          _scaffoldKey.currentState
+                                              .showSnackBar(SnackBar(
+                                            content: Text("Password အားနဲနေသည်"),
+                                            duration: Duration(seconds: 3),
+                                            backgroundColor: Constants.emergencyColor,
+                                          ));
+                                        }else if(e.code=='email-already-in-use'){
+                                          _scaffoldKey.currentState
+                                              .showSnackBar(SnackBar(
+                                            content: Text("Email မှာအသုံးပြုပြီးသား ဖြစ်နေသည်"),
+                                            duration: Duration(seconds: 3),
+                                            backgroundColor: Constants.emergencyColor,
+                                          ));
+
+                                        }
+                                      } catch (e){
+                                        print("error$e");
+                                        _scaffoldKey.currentState
+                                            .showSnackBar(SnackBar(
+                                          content: Text(e.toString()),
+                                          duration: Duration(seconds: 3),
+                                          backgroundColor: Constants.emergencyColor,
+                                        ));
                                       }
-                                    } catch (e){
-                                      print("error$e");
-                                      _scaffoldKey.currentState
-                                          .showSnackBar(SnackBar(
-                                        content: Text(e.toString()),
-                                        duration: Duration(seconds: 3),
-                                        backgroundColor: Constants.emergencyColor,
-                                      ));
+
+                                    }else {
+                                      //update the user info
+                                      FocusScope.of(context).requestFocus(FocusNode());
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text( 'အချက်အလက်များပြင်ဆင်မည်လား?',
+                                              style: new TextStyle(
+                                                  fontSize: 20.0, color: Constants.thirdColor,fontFamily: Constants.PrimaryFont)),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                              child: Text('ပြင်ဆင်မည်',
+                                                  style: new TextStyle(
+                                                      fontSize: 16.0,
+                                                      color: Constants.primaryColor,
+                                                      fontFamily: Constants.PrimaryFont
+                                                  ),
+                                                  textAlign: TextAlign.right),
+                                              onPressed: () async {
+                                                Navigator.pop(context);
+
+                                                setState(() {
+                                                  loading= false;
+                                                });
+                                                CollectionReference users = FirebaseFirestore.instance.collection('user');
+                                                users.doc(userId)
+                                                    .update({'user_name':nameController.text.trim(),
+                                                  'phone_number' : phoneController.text.trim(),
+                                                  'address': addressController.text.trim(),
+                                                })
+                                                    .then((value) {
+                                                  setState(() {
+                                                    loading=false;
+                                                  });
+                                                      _scaffoldKey.currentState
+                                                    .showSnackBar(SnackBar(
+                                                  content: Text('အောင်မြင်ပါသည်'),
+                                                  duration: Duration(seconds: 3),
+                                                  backgroundColor:Colors.greenAccent,
+                                                ));
+                                                   }
+                                                ).catchError((error) {
+                                                  setState(() {
+                                                    loading= false;
+                                                  });
+                                                  _scaffoldKey.currentState
+                                                    .showSnackBar(SnackBar(
+                                                  content: Text('မအောင်မြင်ပါ'+ error),
+                                                  duration: Duration(seconds: 3),
+                                                  backgroundColor:Colors.redAccent,
+                                                ));
+                                                });
+
+                                              },
+                                            ),
+                                            FlatButton(
+                                              child: Text('မပြင်ဆင်ပါ',
+                                                  style: new TextStyle(
+                                                      fontSize: 16.0,
+                                                      color: Constants.primaryColor,
+                                                      fontFamily: Constants.PrimaryFont
+                                                  ),
+                                                  textAlign: TextAlign.right),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            )
+                                          ],
+                                        ),
+                                      );
                                     }
 
                                     setState(() {
@@ -601,7 +669,7 @@ class _EditRegisterState extends State<EditRegister> with TickerProviderStateMix
                                 child: Container(
                                   constraints: BoxConstraints(minHeight: 50.0),
                                   alignment: Alignment.center,
-                                  child: Text('Register',style: TextStyle(color: Colors.white,fontSize: 18.0,fontFamily:Constants.PrimaryFont),),
+                                  child: Text(userName == "" || userName == null? 'Register' : 'Update',style: TextStyle(color: Colors.white,fontSize: 18.0,fontFamily:Constants.PrimaryFont),),
                                 ),
                               ),
                             ),

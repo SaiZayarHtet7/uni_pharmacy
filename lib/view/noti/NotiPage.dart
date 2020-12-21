@@ -47,7 +47,7 @@ class _NotiPageState extends State<NotiPage> {
             onPressed: ()=>Navigator.of(context).pop()
         ),
         toolbarHeight: 70,
-        title: Text('Notification'),
+        title: Text('အသိပေးချက်များ'),
       ),
       body: Container(
           child: StreamBuilder<QuerySnapshot>(
@@ -84,7 +84,8 @@ class _NotiPageState extends State<NotiPage> {
                                 ),
                               ),
                               placeholder: (context, url) => CircularProgressIndicator(),
-                              errorWidget: (context, url, error) => Icon(Icons.error),
+                              errorWidget: (context, url, error) => Container(width: 50,height: 50,
+                                  child: Icon(Icons.account_circle,color: Constants.thirdColor,size: 50,)),
                             ),
                             title: Text(document.data()['noti_title'],style: TextStyle(fontFamily: Constants.PrimaryFont,fontWeight: FontWeight.bold),),
                             subtitle: Column(

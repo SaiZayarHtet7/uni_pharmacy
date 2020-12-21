@@ -6,7 +6,6 @@ import 'package:uni_pharmacy/models/OrderModel.dart';
 import 'package:uni_pharmacy/models/PriceModel.dart';
 import 'package:uni_pharmacy/models/ProductModel.dart';
 import 'package:uni_pharmacy/models/UpdatPrice.dart';
-import 'package:uni_pharmacy/models/product_model.dart';
 import 'package:uni_pharmacy/models/user_model.dart';
 
 class FirestoreService {

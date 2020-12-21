@@ -384,7 +384,7 @@ class _DashBoardState extends State<DashBoard> {
                           child: Container(
                             constraints: BoxConstraints(minHeight: 50.0),
                             alignment: Alignment.center,
-                            child: Text('Change Slide Image',style: TextStyle(color: Colors.white,fontSize: 18.0,fontFamily:Constants.PrimaryFont),),
+                            child: Text('အလှဓါတ်ပုံများ ပြင်ဆင်မည်',style: TextStyle(color: Colors.white,fontSize: 18.0,fontFamily:Constants.PrimaryFont),),
                           ),
                         ),
                       ),
@@ -404,14 +404,14 @@ class _DashBoardState extends State<DashBoard> {
                                   context,
                                   MaterialPageRoute(builder: (context) => ProductPage()),
                                 ),
-                                  child:  CardIcon(Icon(Icons.add,size: 50,color: Colors.white,), 'Add Product','$productCount','#FD7F2C','#FD9346'),
+                                  child:  CardIcon(Icon(Icons.add,size: 50,color: Colors.white,), 'ဆေးပစ္စည်းများ','$productCount','#FD7F2C','#FD9346'),
                               ),
                               InkWell(
                                 onTap: () =>Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) => EditCategory()),
                                 ),
-                                  child: CardIcon(Icon(Icons.category,size: 50,color: Colors.white,), 'Add Category','$categoryCount','#48b1bf','#06beb6')),
+                                  child: CardIcon(Icon(Icons.category,size: 50,color: Colors.white,), 'အမျိုးအစားများ','$categoryCount','#48b1bf','#06beb6')),
                             ]
                           ),
                           TableRow(
@@ -421,13 +421,13 @@ class _DashBoardState extends State<DashBoard> {
                                       context,
                                       MaterialPageRoute(builder: (context) => EditUnt()),
                                     ),
-                                    child: CardIcon(Icon(Icons.ac_unit,size: 50,color: Colors.white,), 'Add Unit','$unitCount','#56ab2f','#43cea2')),
+                                    child: CardIcon(Icon(Icons.ac_unit,size: 50,color: Colors.white,), 'ယူနစ်များ','$unitCount','#56ab2f','#43cea2')),
                                 InkWell(
                                     onTap: ()=> Navigator.push(
                                       context,
                                       MaterialPageRoute(builder: (context) => Register()),
                                     ),
-                                    child: CardIcon(Icon(Icons.account_circle,size: 50,color: Colors.white,), 'Register','$userCount','#F7971E','#FFD200')),
+                                    child: CardIcon(Icon(Icons.account_circle,size: 50,color: Colors.white,), 'မှတ်ပုံတင်ရန်','$userCount','#F7971E','#FFD200')),
                               ]
                           )
                         ],
@@ -553,7 +553,7 @@ class _HeaderOnlyState extends State<HeaderOnly> {
                 errorWidget: (context, url, error) => Icon(Icons.error),
               ),
               SizedBox(height: 10.0,),
-              Text("Uni Pharmacy",style: TextStyle(color:Colors.white,fontSize: 16,fontFamily: Constants.PrimaryFont),)
+              Text("UNI Pharmacy",style: TextStyle(color:Colors.white,fontSize: 16,fontFamily: Constants.PrimaryFont),)
             ],
           ),
         ),

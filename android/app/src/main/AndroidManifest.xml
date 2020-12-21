@@ -13,7 +13,7 @@
 
     <application
         android:name=".Application"
-        android:label="uni_pharmacy"
+        android:label="UNI Pharmacy"
         android:icon="@mipmap/ic_launcher">
         <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
             <intent-filter>

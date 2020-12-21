@@ -18,6 +18,8 @@ class _ProductPageState extends State<ProductPage> {
   String url, name, description;
   List<ProductModel> product = [];
   String searchName;
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +31,7 @@ class _ProductPageState extends State<ProductPage> {
             Navigator.pop(context);
           }
         ),
-        title: Text('Product'),
+        title: Text('ဆေးပစ္စည်းများ'),
         backgroundColor: Constants.primaryColor,
       ),
       body: Container(
@@ -46,7 +48,7 @@ class _ProductPageState extends State<ProductPage> {
                     fontSize: 15.0, fontFamily: Constants.PrimaryFont),
                 onChanged: (value) {
                   setState(() {
-                    searchName = value.toString();
+                    searchName = value.toString().toLowerCase();
                   });
                 },
                 decoration: InputDecoration(
@@ -127,7 +129,6 @@ class _ProductPageState extends State<ProductPage> {
         print('PRoduct name is == '+ name);
         print('PRoduct description =='+description);
         print("product photo =="+photo);
-
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -136,20 +137,29 @@ class _ProductPageState extends State<ProductPage> {
       },
       child:  Container(
         padding: EdgeInsets.all(0),
-        height:120,
+        height:170,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: 25.0,
-              padding: EdgeInsets.symmetric(horizontal: 3),
-              child: Text(
-                '$name',
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: Constants.PrimaryFont,
-                  fontSize: 18,
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              height: 33,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Text(
+                      '$name',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: Constants.PrimaryFont,
+                        fontSize: 17,
+                      ),
+                    ),],
                 ),
               ),
             ),
@@ -159,7 +169,7 @@ class _ProductPageState extends State<ProductPage> {
                 imageUrl: photo,
                 fit: BoxFit.cover,
                 imageBuilder: (context, imageProvider) => Container(
-                  height: 120.0,
+                  height: 115.0,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(9),
                     border:Border.all(color: Colors.black,width: 1),
@@ -168,7 +178,23 @@ class _ProductPageState extends State<ProductPage> {
                   ),
                 ),
                 placeholder: (context, url) => Container(height: 100, child: Center(child: CircularProgressIndicator())),
-                errorWidget: (context, url, error) => Icon(Icons.error),
+                 errorWidget: (context, url, error) =>
+                     Container(
+                       height: 115.0,
+                       decoration: BoxDecoration(
+                         borderRadius: BorderRadius.circular(9),
+                         border:Border.all(color: Colors.black,width: 1),
+                         image: DecorationImage(
+                           image: AssetImage(
+                               'assets/image/logo.jpg'),
+                           fit: BoxFit.cover,
+                         ),
+                         shape: BoxShape.rectangle,
+                       ),
+                     )
+                     //ClipRRect(
+                //     borderRadius: BorderRadius.circular(8.0),
+                //     child: Image.asset('assets/image/logo.jpg',height: 120.0,fit: BoxFit.cover,)),
               ),
             ),
             SizedBox(height: 10.0,)

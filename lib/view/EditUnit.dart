@@ -32,7 +32,7 @@ class _EditUntState extends State<EditUnt> {
               Navigator.pop(context);
             }
         ),
-        backgroundColor: Constants.primaryColor, title: Text('Unit အသစ်ထည့်ရန် ',style: TextStyle(color: Colors.white,fontFamily: Constants.PrimaryFont),),),
+        backgroundColor: Constants.primaryColor, title: Text('ယူနစ် အသစ်ထည့်ရန် ',style: TextStyle(color: Colors.white,fontFamily: Constants.PrimaryFont),),),
       body:Container(
         padding: EdgeInsets.all(10),
         child: StreamBuilder<QuerySnapshot>(

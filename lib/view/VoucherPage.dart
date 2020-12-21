@@ -323,7 +323,7 @@ class _HeaderOnlyState extends State<HeaderOnly> {
                 errorWidget: (context, url, error) => Icon(Icons.error),
               ),
               SizedBox(height: 10.0,),
-              Text("Uni Pharmacy",style: TextStyle(color:Colors.white,fontSize: 16,fontFamily: Constants.PrimaryFont),)
+              Text("UNI Pharmacy",style: TextStyle(color:Colors.white,fontSize: 16,fontFamily: Constants.PrimaryFont),)
             ],
           ),
         ),

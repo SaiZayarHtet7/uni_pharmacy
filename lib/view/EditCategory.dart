@@ -37,7 +37,7 @@ class _EditCategoryState extends State<EditCategory> {
               Navigator.pop(context);
             }
         ),
-        title: Text('Category'),
+        title: Text('အမျိုးအစားများ'),
       backgroundColor: Constants.primaryColor,),
       body: Container(
         padding: EdgeInsets.all(10),
@@ -189,7 +189,7 @@ class _CRUD_CategoryState extends State<CRUD_Category> {
               Navigator.pop(context);
             }
         ),
-        title: Text('Edit Category'),backgroundColor: Constants.primaryColor,),
+        title: Text(uuid==""? 'အမျိုးအစား အသစ်ထည့်မည်' : "အမျိုးအစား ပြင်ဆင်မည်"),backgroundColor: Constants.primaryColor,),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(10),

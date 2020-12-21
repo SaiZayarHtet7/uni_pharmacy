@@ -26,7 +26,7 @@ class ChatDetail extends StatefulWidget {
 
 class _ChatDetailState extends State<ChatDetail> {
   String userName,userId,userPhoto;
-  var format =new DateFormat.yMd().add_jm();
+  var format =new DateFormat('dd-MM-yyyy hh:mm a');
   _ChatDetailState(this.userName, this.userId,this.userPhoto);
   final messageController = TextEditingController();
   var uuid=Uuid();
@@ -216,21 +216,29 @@ class _ChatDetailState extends State<ChatDetail> {
                                   }
                                 },
                                 child: document.data()['message_type']=="image"?
-                                Container(
-                                  width:  MediaQuery.of(context).size.width/1.4,
-                                  margin: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(color:document.data()['sender']=="admin" ? Constants.thirdColor:Colors.grey[300],
-                                      borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft:Radius.circular(10),bottomLeft: Radius.circular(document.data()['sender']=="admin" ?10:0),bottomRight: Radius.circular(document.data()['sender']=="admin" ?0:10))),
-                                  child: Column(
-                                    children: [
-                                      CachedNetworkImage(
-                                        imageUrl:document.data()['message_text'],
-                                        fit: BoxFit.fitWidth,
-                                        placeholder: (context, url) => CircularProgressIndicator(),
-                                        errorWidget: (context, url, error) => Icon(Icons.error),
-                                      ),
-                                    ],
+                                InkWell(
+                                  onTap: (){
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => LargeImage(document.data()['message_text'])),
+                                    );
+                                  },
+                                  child: Container(
+                                    width:  MediaQuery.of(context).size.width/1.4,
+                                    margin: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(color:document.data()['sender']=="admin" ? Constants.thirdColor:Colors.grey[300],
+                                        borderRadius: BorderRadius.only(topRight: Radius.circular(10),topLeft:Radius.circular(10),bottomLeft: Radius.circular(document.data()['sender']=="admin" ?10:0),bottomRight: Radius.circular(document.data()['sender']=="admin" ?0:10))),
+                                    child: Column(
+                                      children: [
+                                        CachedNetworkImage(
+                                          imageUrl:document.data()['message_text'],
+                                          fit: BoxFit.fitWidth,
+                                          placeholder: (context, url) => CircularProgressIndicator(),
+                                          errorWidget: (context, url, error) => Icon(Icons.error),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ): Container(
                                   margin: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
@@ -359,7 +367,6 @@ class _ChatDetailState extends State<ChatDetail> {
     );
   }
 
-
   Future _openGallary(BuildContext context) async {
     var picture = await picker.getImage(source: ImageSource.gallery);
     File tmpFile = File(picture.path);
@@ -401,4 +408,34 @@ class _ChatDetailState extends State<ChatDetail> {
         .catchError((error) => print("Failed to update user: $error"));
   }
 
+}
+
+class LargeImage extends StatelessWidget {
+  String imgUrl;
+  LargeImage(this.imgUrl);
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(child:InkWell(
+        onTap: (){
+          Navigator.of(context).pop();
+        },
+        child: Center(
+          child: CachedNetworkImage(
+            imageUrl: imgUrl,
+            fit: BoxFit.cover,
+            imageBuilder: (context, imageProvider) => Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: imageProvider, fit: BoxFit.fitWidth),
+              ),
+            ),
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) => Icon(Icons.error),
+          ),
+        ),
+      ),),
+    );
+  }
 }
