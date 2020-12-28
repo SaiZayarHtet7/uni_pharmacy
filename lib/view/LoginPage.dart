@@ -34,6 +34,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
   bool pass_visibility,showLoading;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String fcmToken;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -370,7 +371,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
                                     height: 130.0,
                                   ),
                                   Text(
-                                    'Version 1.0.2+2',
+                                    'Version 1.0.3',
                                     style:
                                     TextStyle(color: Constants.primaryColor, fontSize: 20),
                                   ),

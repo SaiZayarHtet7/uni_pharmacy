@@ -360,12 +360,12 @@ class _EditProductState extends State<EditProduct> {
                           FocusScope.of(context).requestFocus(FocusNode());
                           if (_formKey.currentState.validate() ) {
                             if(productId == "" ) {
-                              if(newCategory == ""){
+                              if(newCategory == "" || newCategory==null){
                                 ///validate Category
                                 _scaffoldKey.currentState
                                     .showSnackBar(SnackBar(
                                   content: Text('data အပြည့်အစုံထည့်ပါ'),
-                                  duration: Duration(seconds: 3),
+                                  duration: Duration(seconds: 1),
                                   backgroundColor: Colors.redAccent,
                                 ));
                               }else{
@@ -536,8 +536,8 @@ class _EditProductState extends State<EditProduct> {
                                     duration: Duration(seconds: 3),
                                     backgroundColor: Colors.greenAccent,
                                   ));
-                                  Future.delayed(Duration(seconds: 1), () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProductPage())));
-
+                                  Future.delayed(Duration(seconds: 1), () =>  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                                      ProductPage()), (Route<dynamic> route) => false));
                                 },
                               )
                             ],
@@ -813,162 +813,161 @@ class _EditProductState extends State<EditProduct> {
                             width: document==""? MediaQuery.of(context).size.width/1.1 : MediaQuery.of(context).size.width/2.2,
                             child: RaisedButton(
                               onPressed: () async {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Text( 'စျေးနူန်းပြင်ဆင်မည်လား',
-                                        style: new TextStyle(
-                                            fontSize: 20.0, color: Constants.thirdColor,fontFamily: Constants.PrimaryFont)),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text('ပြင်မည်',
+                                String priceID=uuid.v4();
+                                print(priceID);
+                                if(quantityController.text=="" || priceController.text=="" || kindPrice=="" || unit==""){
+                                  print('no data');
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => ToastNoContext(),
+                                  ));
+                                }else{
+                                  if(document=="") {
+                                    print('quantity'+quantityController.text);
+                                    print('price'+priceController.text);
+                                    print('kind'+kindPrice);
+                                    print('unit'+unit);
+                                    print('productId'+productId);
+                                    PriceModel pricemodel = PriceModel(
+                                        id: priceID,
+                                        unit: unit,
+                                        kind: kindPrice,
+                                        price: priceController.text,
+                                        quantity:int.parse(quantityController.text)
+                                    );
+                                    FirestoreService().addPrice(
+                                        'price', productId, pricemodel);
+                                    document=priceID;
+                                    _scaffoldKey.currentState
+                                        .showSnackBar(SnackBar(
+                                      content: Text('စျေးနူန်း‌ ထည့်သ္ငင်းပြီးပါပြီ'),
+                                      duration: Duration(seconds: 3),
+                                      backgroundColor: Colors.greenAccent,
+                                    ));
+                                  }else{
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text( 'စျေးနူန်းပြင်ဆင်မည်လား',
                                             style: new TextStyle(
-                                                fontSize: 16.0,
-                                                color: Constants.primaryColor,
-                                                fontFamily: Constants.PrimaryFont
-                                            ),
-                                            textAlign: TextAlign.right),
-                                        onPressed: () async {
-                                          String priceID=uuid.v4();
-                                          print(priceID);
-                                          if(quantityController.text=="" || priceController.text=="" || kindPrice=="" || unit==""){
-                                            print('no data');
-                                            Navigator.of(context).push(MaterialPageRoute(
-                                              builder: (context) => ToastNoContext(),
-                                            ));
-                                          }else{
-                                            if(document=="") {
-                                              print('quantity'+quantityController.text);
-                                              print('price'+priceController.text);
-                                              print('kind'+kindPrice);
-                                              print('unit'+unit);
-                                              print('productId'+productId);
-                                              PriceModel pricemodel = PriceModel(
-                                                  id: priceID,
-                                                  unit: unit,
-                                                  kind: kindPrice,
-                                                  price: priceController.text,
-                                                  quantity:int.parse(quantityController.text)
-                                              );
-                                              FirestoreService().addPrice(
-                                                  'price', productId, pricemodel);
-                                              document=priceID;
-                                            }else{
-                                              print('quantity'+quantityController.text);
-                                              print('price'+priceController.text);
-                                              print('kind'+kindPrice);
-                                              print('unit'+unit);
-                                              print('productId'+productId);
+                                                fontSize: 20.0, color: Constants.thirdColor,fontFamily: Constants.PrimaryFont)),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            child: Text('ပြင်မည်',
+                                                style: new TextStyle(
+                                                    fontSize: 16.0,
+                                                    color: Constants.primaryColor,
+                                                    fontFamily: Constants.PrimaryFont
+                                                ),
+                                                textAlign: TextAlign.right),
+                                            onPressed: () async {
+                                              String priceID=uuid.v4();
+                                              print(priceID);
+                                              if(quantityController.text=="" || priceController.text=="" || kindPrice=="" || unit==""){
+                                                print('no data');
+                                                Navigator.of(context).push(MaterialPageRoute(
+                                                  builder: (context) => ToastNoContext(),
+                                                ));
+                                              }else{
+                                                  print('quantity'+quantityController.text);
+                                                  print('price'+priceController.text);
+                                                  print('kind'+kindPrice);
+                                                  print('unit'+unit);
+                                                  print('productId'+productId);
 
-                                              PriceModel pricemodel = PriceModel(
-                                                  id: document,
-                                                  unit: unit,
-                                                  kind: kindPrice,
-                                                  price: priceController.text,
-                                                  quantity: int.parse(quantityController.text)
-                                              );
-                                              FirestoreService().editPrice(
-                                                  'price', productId, pricemodel);
-                                            }
-                                          }
-                                          _scaffoldKey.currentState
-                                              .showSnackBar(SnackBar(
-                                            content: Text('စျေးနူန်း‌ ပြင်ဆင်ပြီးပါပြီ'),
-                                            duration: Duration(seconds: 3),
-                                            backgroundColor: Colors.greenAccent,
-                                          ));
-                                          Navigator.of(context).pop();
-                                        },
+                                                  PriceModel pricemodel = PriceModel(
+                                                      id: document,
+                                                      unit: unit,
+                                                      kind: kindPrice,
+                                                      price: priceController.text,
+                                                      quantity: int.parse(quantityController.text)
+                                                  );
+                                                  FirestoreService().editPrice(
+                                                      'price', productId, pricemodel);
+
+                                              }
+                                              _scaffoldKey.currentState
+                                                  .showSnackBar(SnackBar(
+                                                content: Text('စျေးနူန်း‌ ပြင်ဆင်ပြီးပါပြီ'),
+                                                duration: Duration(seconds: 3),
+                                                backgroundColor: Colors.greenAccent,
+                                              ));
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          FlatButton(
+                                            child: Text('ပြင်မည်(app ပေါ်တင်မည်)',
+                                                style: new TextStyle(
+                                                    fontSize: 16.0,
+                                                    color: Constants.primaryColor,
+                                                    fontFamily: Constants.PrimaryFont
+                                                ),
+                                                textAlign: TextAlign.right),
+                                            onPressed: () async {
+                                              String priceID=uuid.v4();
+                                              print(priceID);
+                                              if(quantityController.text=="" || priceController.text=="" || kindPrice=="" || unit==""){
+                                                print('no data');
+                                                Navigator.of(context).push(MaterialPageRoute(
+                                                  builder: (context) => ToastNoContext(),
+                                                ));
+                                              }else{
+
+                                                  print('quantity'+quantityController.text);
+                                                  print('price'+priceController.text);
+                                                  print('kind'+kindPrice);
+                                                  print('unit'+unit);
+                                                  print('productId'+productId);
+
+                                                  PriceModel pricemodel = PriceModel(
+                                                      id: document,
+                                                      unit: unit,
+                                                      kind: kindPrice,
+                                                      price: priceController.text,
+                                                      quantity: int.parse(quantityController.text)
+                                                  );
+
+                                                  FirestoreService().editPrice(
+                                                      'price', productId, pricemodel);
+                                                  UpdatePriceModel updatePriceModel=UpdatePriceModel(
+                                                      id:uuid.v4(),
+                                                      kind: kindPrice,
+                                                      quantity: int.parse(quantityController.text),
+                                                      unit: unit,
+                                                      prodctName: productName,
+                                                      productPhoto: productImage,
+                                                      oldPrice:oldPrice,
+                                                      newPrice: priceController.text,
+                                                      createdDate: DateTime.now().millisecondsSinceEpoch
+                                                  );
+                                                  FirestoreService().addUpdatedPrice(updatePriceModel);
+
+                                              }
+                                              _scaffoldKey.currentState
+                                                  .showSnackBar(SnackBar(
+                                                content: Text('စျေးနူန်း‌ ပြင်ဆင်ပြီးပါပြီ'),
+                                                duration: Duration(seconds: 3),
+                                                backgroundColor: Colors.greenAccent,
+                                              ));
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          FlatButton(
+                                            child: Text('မပြင်ပါ',
+                                                style: new TextStyle(
+                                                    fontSize: 16.0,
+                                                    color: Constants.primaryColor,
+                                                    fontFamily: Constants.PrimaryFont
+                                                ),
+                                                textAlign: TextAlign.right),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          )
+                                        ],
                                       ),
-                                      FlatButton(
-                                        child: Text('ပြင်မည်(app ပေါ်တင်မည်)',
-                                            style: new TextStyle(
-                                                fontSize: 16.0,
-                                                color: Constants.primaryColor,
-                                                fontFamily: Constants.PrimaryFont
-                                            ),
-                                            textAlign: TextAlign.right),
-                                        onPressed: () async {
-                                          String priceID=uuid.v4();
-                                          print(priceID);
-                                          if(quantityController.text=="" || priceController.text=="" || kindPrice=="" || unit==""){
-                                            print('no data');
-                                            Navigator.of(context).push(MaterialPageRoute(
-                                              builder: (context) => ToastNoContext(),
-                                            ));
-                                          }else{
-                                            if(document=="") {
-                                              print('quantity'+quantityController.text);
-                                              print('price'+priceController.text);
-                                              print('kind'+kindPrice);
-                                              print('unit'+unit);
-                                              print('productId'+productId);
-                                              PriceModel pricemodel = PriceModel(
-                                                  id: priceID,
-                                                  unit: unit,
-                                                  kind: kindPrice,
-                                                  price: priceController.text,
-                                                  quantity:int.parse(quantityController.text)
-                                              );
-                                              FirestoreService().addPrice(
-                                                  'price', productId, pricemodel);
-                                              document=priceID;
-                                            }else{
-                                              print('quantity'+quantityController.text);
-                                              print('price'+priceController.text);
-                                              print('kind'+kindPrice);
-                                              print('unit'+unit);
-                                              print('productId'+productId);
-
-                                              PriceModel pricemodel = PriceModel(
-                                                  id: document,
-                                                  unit: unit,
-                                                  kind: kindPrice,
-                                                  price: priceController.text,
-                                                  quantity: int.parse(quantityController.text)
-                                              );
-
-                                              FirestoreService().editPrice(
-                                                  'price', productId, pricemodel);
-                                              UpdatePriceModel updatePriceModel=UpdatePriceModel(
-                                                  id:uuid.v4(),
-                                                  kind: kindPrice,
-                                                  quantity: int.parse(quantityController.text),
-                                                  unit: unit,
-                                                  prodctName: productName,
-                                                  productPhoto: productImage,
-                                                  oldPrice:oldPrice,
-                                                  newPrice: priceController.text,
-                                                  createdDate: DateTime.now().millisecondsSinceEpoch
-                                              );
-                                              FirestoreService().addUpdatedPrice(updatePriceModel);
-                                            }
-                                          }
-                                          _scaffoldKey.currentState
-                                              .showSnackBar(SnackBar(
-                                            content: Text('စျေးနူန်း‌ ပြင်ဆင်ပြီးပါပြီ'),
-                                            duration: Duration(seconds: 3),
-                                            backgroundColor: Colors.greenAccent,
-                                          ));
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      FlatButton(
-                                        child: Text('မပြင်ပါ',
-                                            style: new TextStyle(
-                                                fontSize: 16.0,
-                                                color: Constants.primaryColor,
-                                                fontFamily: Constants.PrimaryFont
-                                            ),
-                                            textAlign: TextAlign.right),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                );
-
+                                    );
+                                  }
+                                }
                                 Navigator.of(context).pop();
                               },
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0),),

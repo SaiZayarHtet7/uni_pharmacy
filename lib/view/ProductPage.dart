@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:uni_pharmacy/models/ProductModel.dart';
 import 'package:uni_pharmacy/service/firestore_service.dart';
 import 'package:uni_pharmacy/util/constants.dart';
+import 'package:uni_pharmacy/view/DashBoard.dart';
 import 'package:uni_pharmacy/view/EditProduct.dart';
 
 class ProductPage extends StatefulWidget {
@@ -19,104 +20,112 @@ class _ProductPageState extends State<ProductPage> {
   List<ProductModel> product = [];
   String searchName;
 
-
+  Future<bool> _onWillPop() async {
+    print('hellp');
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+        DashBoard()), (Route<dynamic> route) => false);
+  }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_rounded),
-          onPressed: (){
-            Navigator.pop(context);
-          }
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_rounded),
+            onPressed: (){
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+                  DashBoard()), (Route<dynamic> route) => false);
+            }
+          ),
+          title: Text('ဆေးပစ္စည်းများ'),
+          backgroundColor: Constants.primaryColor,
         ),
-        title: Text('ဆေးပစ္စည်းများ'),
-        backgroundColor: Constants.primaryColor,
-      ),
-      body: Container(
-        padding: EdgeInsets.all(10.0),
-        child: Stack(
-          children: [
-            Container(
-              color: Colors.white,
-              padding: EdgeInsets.all(0),
-              height: 50,
-              child: TextFormField(
-                keyboardType: TextInputType.name,
-                style: TextStyle(
-                    fontSize: 15.0, fontFamily: Constants.PrimaryFont),
-                onChanged: (value) {
-                  setState(() {
-                    searchName = value.toString().toLowerCase();
-                  });
-                },
-                decoration: InputDecoration(
-                    contentPadding: EdgeInsets.all(2),
-                    hintText: 'အမည်ဖြင့်ရှာမည်',
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Constants.primaryColor,
-                    ),
-                    enabledBorder: new OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: new BorderSide(color: Colors.black,width: 1),
-                    ),
-                    focusedBorder: new OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: new BorderSide(color: Colors.black,width: 1),),
-                    border: new OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: new BorderSide(color: Colors.black,width: 1),
-                    )),
+        body: Container(
+          padding: EdgeInsets.all(10.0),
+          child: Stack(
+            children: [
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(0),
+                height: 50,
+                child: TextFormField(
+                  keyboardType: TextInputType.name,
+                  style: TextStyle(
+                      fontSize: 15.0, fontFamily: Constants.PrimaryFont),
+                  onChanged: (value) {
+                    setState(() {
+                      searchName = value.toString().toLowerCase();
+                    });
+                  },
+                  decoration: InputDecoration(
+                      contentPadding: EdgeInsets.all(2),
+                      hintText: 'အမည်ဖြင့်ရှာမည်',
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Constants.primaryColor,
+                      ),
+                      enabledBorder: new OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: new BorderSide(color: Colors.black,width: 1),
+                      ),
+                      focusedBorder: new OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: new BorderSide(color: Colors.black,width: 1),),
+                      border: new OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: new BorderSide(color: Colors.black,width: 1),
+                      )),
+                ),
               ),
-            ),
-            Container(
-              margin:  EdgeInsets.only(top: 60),
-              child:StreamBuilder<QuerySnapshot>(
-                  stream: (searchName=="" || searchName==null) ? FirestoreService().get('product'):FirebaseFirestore.instance
-                      .collection('product').where("product_search", arrayContains : searchName).snapshots(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.hasError) {
-                      return Text('Something went wrong');
-                    }
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    }
-                    return new GridView(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10),
-                      children: snapshot.data.docs
-                          .map(
-                            (DocumentSnapshot document) => ProductCard(
-                                document.data()['product_id'],
-                                document.data()['product_name'],
-                                document.data()['description'],
-                                document.data()['product_image'],
-                                document.data()['category']),
-                          )
-                          .toList(),
-                    );
-                  }),
-            )
-          ],
+              Container(
+                margin:  EdgeInsets.only(top: 60),
+                child:StreamBuilder<QuerySnapshot>(
+                    stream: (searchName=="" || searchName==null) ? FirestoreService().get('product'):FirebaseFirestore.instance
+                        .collection('product').where("product_search", arrayContains : searchName).snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        return Text('Something went wrong');
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      }
+                      return new GridView(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10),
+                        children: snapshot.data.docs
+                            .map(
+                              (DocumentSnapshot document) => ProductCard(
+                                  document.data()['product_id'],
+                                  document.data()['product_name'],
+                                  document.data()['description'],
+                                  document.data()['product_image'],
+                                  document.data()['category']),
+                            )
+                            .toList(),
+                      );
+                    }),
+              )
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => EditProduct("", "", "", "", "")));
-        },
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => EditProduct("", "", "", "", "")));
+          },
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          backgroundColor: Constants.primaryColor,
         ),
-        backgroundColor: Constants.primaryColor,
       ),
     );
   }
