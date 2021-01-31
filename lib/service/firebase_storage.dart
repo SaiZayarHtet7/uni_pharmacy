@@ -29,6 +29,7 @@ Future<String> UploadPhoto(String path,File image) async{
    StorageUploadTask uploadTask = storageReference.putFile(image);
   var downUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
   url = downUrl.toString();
+  print(url);
   return url;
 }
 

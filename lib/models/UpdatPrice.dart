@@ -7,8 +7,9 @@ class UpdatePriceModel {
   String kind;
   String unit;
   String id;
+  String productId;
 
-  UpdatePriceModel({this.id,this.prodctName,this.productPhoto,this.kind, this.quantity,this.unit,this.oldPrice,this.newPrice,this.createdDate,});
+  UpdatePriceModel({this.id,this.prodctName,this.productPhoto,this.kind, this.quantity,this.unit,this.oldPrice,this.newPrice,this.createdDate,this.productId});
 
   Map<String, dynamic> toMap() {
     return {
@@ -20,7 +21,8 @@ class UpdatePriceModel {
       'unit': unit,
       'old_price':oldPrice,
       'new_price':newPrice,
-      'created_date': createdDate
+      'created_date': createdDate,
+      'product_id':productId
     };
   }
 }

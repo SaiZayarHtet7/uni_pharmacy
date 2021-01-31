@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/route_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_pharmacy/util/constants.dart';
 import 'file:///C:/Users/MSI/freelanceProjects/uni_pharmacy/lib/view/chat/ChatBox.dart';
@@ -16,8 +17,6 @@ import 'package:uni_pharmacy/view/Widget/VoucherCard.dart';
 import 'package:uni_pharmacy/view/noti/NotiPage.dart';
 
 
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
 class OrderPage extends StatefulWidget {
   @override
   _OrderPageState createState() => _OrderPageState();
@@ -29,43 +28,6 @@ class _OrderPageState extends State<OrderPage> {
   String userName;
   int current = 0;
 
-  Future<bool> _onWillPop() async {
-    print('hellp');
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text( 'Application မှထွက်ရန် သေချာပြီလား?',
-            style: new TextStyle(
-                fontSize: 20.0, color: Constants.thirdColor,fontFamily: Constants.PrimaryFont)),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('ထွက်မည်',
-                style: new TextStyle(
-                    fontSize: 16.0,
-                    color: Constants.primaryColor,
-                    fontFamily: Constants.PrimaryFont
-                ),
-                textAlign: TextAlign.right),
-            onPressed: () async {
-              SystemNavigator.pop();
-            },
-          ),
-          FlatButton(
-            child: Text('မထွက်ပါ',
-                style: new TextStyle(
-                    fontSize: 16.0,
-                    color: Constants.primaryColor,
-                    fontFamily: Constants.PrimaryFont
-                ),
-                textAlign: TextAlign.right),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          )
-        ],
-      ),
-    );
-  }
   fetchData() async {
     loading = true;
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -107,149 +69,141 @@ class _OrderPageState extends State<OrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: WillPopScope(
-        onWillPop: _onWillPop,
-        child: Scaffold(
-          key: _scaffoldKey,
-          endDrawer: new Drawer(
-              child: HeaderOnly()),
-          appBar: new AppBar(
-            automaticallyImplyLeading: false,
-            shadowColor: Constants.thirdColor,
-            actions: [
-              Badge(
-                position:BadgePosition(top: 4,end: -5) ,
-                badgeContent: Text(notiCount.toString()),
-                showBadge: notiCount==0 || notiCount==null? false :true,
-                child: IconButton(icon:
-                Icon(Icons.notifications,color: Colors.black,),onPressed: () async{
-                  // await FirebaseFirestore.instance.
-                  //     collection('noti').get().then((value) => value
-                  // ));
-                  setState(() {
-                    notiCount=0;
-                  });
 
-                  FirebaseFirestore.instance.collection('noti').get().then((value){
-                    value.docs.forEach((element) {element.reference.update(<String,dynamic>{'noti_type':'read'}); });
-                  });
 
-                  // db.collection("cities").get().then(function(querySnapshot) {
-                  // querySnapshot.forEach(function(doc) {
-                  // doc.ref.update({
-                  // capital: true
-                  // });
-                  // });
-                  // });
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+    return  Scaffold(
+        key: _scaffoldKey,
+        endDrawer: new Drawer(
+            child: HeaderOnly()),
+        appBar: new AppBar(
+          automaticallyImplyLeading: false,
+          shadowColor: Constants.thirdColor,
+          actions: [
+            Badge(
+              position:BadgePosition(top: 4,end: -5) ,
+              badgeContent: Text(notiCount.toString()),
+              showBadge: notiCount==0 || notiCount==null? false :true,
+              child: IconButton(icon:
+              Icon(Icons.notifications,color: Colors.black,),onPressed: () async{
+                // await FirebaseFirestore.instance.
+                //     collection('noti').get().then((value) => value
+                // ));
+                setState(() {
+                  notiCount=0;
+                });
 
-                  // await snapshots.forEach((document) async {
-                  //   document.reference.updateData(<String, dynamic>{
-                  //
-                  //   });
-                  // })
+                FirebaseFirestore.instance.collection('noti').get().then((value){
+                  value.docs.forEach((element) {element.reference.update(<String,dynamic>{'noti_type':'read'}); });
+                });
 
-                  ///Logics for notification
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => NotiPage()),
-                  );
-                },),
-              ),
-              SizedBox(width: 10.0,),
-              InkWell(child:messageNotiCount==0||messageNotiCount==null ?
-              Image.asset('assets/image/menu.png',width: 30,):
-              Badge(position:BadgePosition(top: 4,end: -5) ,
-                badgeContent: Text(messageNotiCount.toString()),child:Image.asset('assets/image/menu.png',width: 30,) , ),onTap: (){
+                // db.collection("cities").get().then(function(querySnapshot) {
+                // querySnapshot.forEach(function(doc) {
+                // doc.ref.update({
+                // capital: true
+                // });
+                // });
+                // });
+
+                // await snapshots.forEach((document) async {
+                //   document.reference.updateData(<String, dynamic>{
+                //
+                //   });
+                // })
+
                 ///Logics for notification
-                _scaffoldKey.currentState.openEndDrawer();
+               Get.to( NotiPage());
               },),
-              SizedBox(width: 10.0,),
+            ),
+            SizedBox(width: 10.0,),
+            InkWell(child:messageNotiCount==0||messageNotiCount==null ?
+            Image.asset('assets/image/menu.png',width: 30,):
+            Badge(position:BadgePosition(top: 4,end: -5) ,
+              badgeContent: Text(messageNotiCount.toString()),child:Image.asset('assets/image/menu.png',width: 30,) , ),onTap: (){
+              ///Logics for notification
+              _scaffoldKey.currentState.openEndDrawer();
+            },),
+            SizedBox(width: 10.0,),
+          ],
+          iconTheme: new IconThemeData(color: Constants.primaryColor),
+          toolbarHeight: 70,
+          title:Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Text('အော်ဒါများ',style: TextStyle(color: Constants.primaryColor,fontFamily: Constants.PrimaryFont),)),
+              Row(children: [
+                SizedBox(width: 10.0,)
+              ],)
             ],
-            iconTheme: new IconThemeData(color: Constants.primaryColor),
-            toolbarHeight: 70,
-            title:Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Text('အော်ဒါများ',style: TextStyle(color: Constants.primaryColor,fontFamily: Constants.PrimaryFont),)),
-                Row(children: [
-                  SizedBox(width: 10.0,)
-                ],)
-              ],
-            ),backgroundColor: Colors.white,),
-          body: SafeArea(
-            child: Container(
-              child: loading == true ? Center(child: CircularProgressIndicator(),) :
-              Column(
-                children: [
-                  SizedBox(height: 10,),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: Column(
-                      children: [
-                        prepareOrderCount==0 || prepareOrderCount==null ? SizedBox(height: 20.0,):Container(
-                          height: 60,
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                  width:75,
-                                  child: Text('ရက်စွဲ',textAlign: TextAlign.center,style: TextStyle(fontFamily: Constants.PrimaryFont),)),
-                              Text('ဘောက်ချာအမှတ်',style: TextStyle(color: Colors.black,fontFamily: Constants.PrimaryFont),),
-                              Container(
-                                width: 130,
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                              ),
-                            ],
-                          ),
+          ),backgroundColor: Colors.white,),
+        body: SafeArea(
+          child: Container(
+            child: loading == true ? Center(child: CircularProgressIndicator(),) :
+            Column(
+              children: [
+                SizedBox(height: 10,),
+                SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    children: [
+                      prepareOrderCount==0 || prepareOrderCount==null ? SizedBox(height: 20.0,):Container(
+                        height: 60,
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                                width:75,
+                                child: Text('ရက်စွဲ',textAlign: TextAlign.center,style: TextStyle(fontFamily: Constants.PrimaryFont),)),
+                            Text('ဘောက်ချာအမှတ်',style: TextStyle(color: Colors.black,fontFamily: Constants.PrimaryFont),),
+                            Container(
+                              width: 130,
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                            ),
+                          ],
                         ),
-                        prepareOrderCount==0 || prepareOrderCount==null ? SizedBox(height: 20.0,): StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance.collection('voucher').where("status",isEqualTo: Constants.orderPrepare).orderBy('voucher_number').snapshots(),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<QuerySnapshot> snapshot) {
-                              if (snapshot.hasError) {
-                                return Text('Something went wrong');
-                              }
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return CircularProgressIndicator();
-                              }
-                              if(snapshot.hasData){
-                                return ListView(
-                                  scrollDirection: Axis.vertical,
-                                  shrinkWrap: true,
-                                  reverse: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  children: snapshot.data.documents.map((DocumentSnapshot document) {
-                                    return InkWell(
-                                        onTap: (){
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (context) => VoucherOrder(document.data()['voucher_id'],document.data()['voucher_number'].toString())),
-                                          );
-                                        },
-                                        child: VoucherCard(document.data()['date_time'], document.data()['voucher_number'].toString(), document.data()['status']));
-                                  }).toList(),
-                                );
-                              }else{
-                                return TitleTextColor("No data", Constants.thirdColor);
-                              }
-                            }),
-                      ],
-                    ),
+                      ),
+                      prepareOrderCount==0 || prepareOrderCount==null ? SizedBox(height: 20.0,): StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance.collection('voucher').where("status",isEqualTo: Constants.orderPrepare).orderBy('voucher_number').snapshots(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasError) {
+                              return Text('Something went wrong');
+                            }
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return CircularProgressIndicator();
+                            }
+                            if(snapshot.hasData){
+                              return ListView(
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                reverse: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                children: snapshot.data.documents.map((DocumentSnapshot document) {
+                                  return InkWell(
+                                      onTap: (){
+                                        Get.to(VoucherOrder(document.data()['voucher_id'],document.data()['voucher_number'].toString()));
+                                      },
+                                      child: VoucherCard(document.data()['date_time'], document.data()['voucher_number'].toString(), document.data()['status']));
+                                }).toList(),
+                              );
+                            }else{
+                              return TitleTextColor("No data", Constants.thirdColor);
+                            }
+                          }),
+                    ],
                   ),
-                  loading ==true? CircularProgressIndicator():
-                  prepareOrderCount==0 || prepareOrderCount==null ? Center(child: SizedBox(child: Text('ပြင်ဆင်နေဆဲ အော်ဒါမရှိသေးပါ',style: TextStyle(color: Constants.thirdColor,fontFamily: Constants.PrimaryFont,fontSize: 16),),)):SizedBox(),
-                ],
-              ),
+                ),
+                loading ==true? CircularProgressIndicator():
+                prepareOrderCount==0 || prepareOrderCount==null ? Center(child: SizedBox(child: Text('ပြင်ဆင်နေဆဲ အော်ဒါမရှိသေးပါ',style: TextStyle(color: Constants.thirdColor,fontFamily: Constants.PrimaryFont,fontSize: 16),),)):SizedBox(),
+              ],
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }
 
@@ -350,10 +304,8 @@ class _HeaderOnlyState extends State<HeaderOnly> {
               style: new TextStyle(fontFamily: Constants.PrimaryFont,fontSize: 14.0),
             ),
             onTap: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => DashBoard()));
+              Navigator.of(context).pop();
+              Get.offAll(DashBoard());
             },
           ),
         ),
@@ -399,10 +351,8 @@ class _HeaderOnlyState extends State<HeaderOnly> {
             style: new TextStyle(fontFamily: Constants.PrimaryFont,fontSize: 14.0),
           ),
           onTap: () {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => VoucherPage()));
+            Navigator.of(context).pop();
+            Get.to(VoucherPage());
           },
         ),
         Padding(
@@ -423,10 +373,8 @@ class _HeaderOnlyState extends State<HeaderOnly> {
             style: new TextStyle(fontFamily: Constants.PrimaryFont,fontSize: 14.0),
           ),
           onTap: () {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ChatBox()));
+            Navigator.of(context).pop();
+            Get.to(ChatBox());
           },
         ) : Badge(
           position: BadgePosition(top: -5,end: 30),
@@ -440,10 +388,8 @@ class _HeaderOnlyState extends State<HeaderOnly> {
               style: new TextStyle(fontFamily: Constants.PrimaryFont,fontSize: 14.0),
             ),
             onTap: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ChatBox()));
+              Navigator.of(context).pop();
+              Get.to(ChatBox());
             },
           ),
         ),
@@ -502,10 +448,7 @@ class _HeaderOnlyState extends State<HeaderOnly> {
                         if (user == null) {
                           print('User is currently signed out!');
                           pref.clear();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => LoginPage()),
-                          );
+                         Get.offAll(LoginPage());
                         } else {
                           print('User is signed in!');
                         }
@@ -527,10 +470,7 @@ class _HeaderOnlyState extends State<HeaderOnly> {
                 ],
               ),
             );
-            // Navigator.pushReplacement(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (context) => HomePage()));
+
           },
         ),
         Padding(

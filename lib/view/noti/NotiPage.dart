@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:uni_pharmacy/util/constants.dart';
 import 'package:intl/intl.dart';
 
@@ -44,7 +45,7 @@ class _NotiPageState extends State<NotiPage> {
         automaticallyImplyLeading: false,
         leading: IconButton(
             icon:Icon( Icons.arrow_back_ios_rounded),
-            onPressed: ()=>Navigator.of(context).pop()
+            onPressed: ()=>Get.back()
         ),
         toolbarHeight: 70,
         title: Text('အသိပေးချက်များ'),

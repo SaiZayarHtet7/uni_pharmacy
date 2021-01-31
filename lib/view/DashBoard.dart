@@ -4,12 +4,14 @@ import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/route_manager.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,7 +35,6 @@ var flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 
-
 class DashBoard extends StatefulWidget {
   @override
   _DashBoardState createState() => _DashBoardState();
@@ -48,43 +49,6 @@ class _DashBoardState extends State<DashBoard> {
   int unitCount,userCount,categoryCount,productCount,messageNotiCount,notiCount;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
-  Future<bool> _onWillPop() async {
-    print('hellp');
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text( 'Application မှထွက်ရန် သေချာပြီလား?',
-            style: new TextStyle(
-                fontSize: 20.0, color: Constants.thirdColor,fontFamily: Constants.PrimaryFont)),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('ထွက်မည်',
-                style: new TextStyle(
-                    fontSize: 16.0,
-                    color: Constants.primaryColor,
-                    fontFamily: Constants.PrimaryFont
-                ),
-                textAlign: TextAlign.right),
-            onPressed: () async {
-              SystemNavigator.pop();
-            },
-          ),
-          FlatButton(
-            child: Text('မထွက်ပါ',
-                style: new TextStyle(
-                    fontSize: 16.0,
-                    color: Constants.primaryColor,
-                    fontFamily: Constants.PrimaryFont
-                ),
-                textAlign: TextAlign.right),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          )
-        ],
-      ),
-    );
-  }
 
 @override
   void initState() {
@@ -146,7 +110,6 @@ class _DashBoardState extends State<DashBoard> {
   loading=true;
   fetchData();
     super.initState();
-
   }
 
   showNotification(Map<String, dynamic> msg) async {
@@ -228,9 +191,10 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: WillPopScope(
-        onWillPop: _onWillPop,
+
+
+    return  DoubleBack(
+        message:"Press back again to close",
         child: Scaffold(
           key: _scaffoldKey,
           endDrawer:new Drawer(
@@ -272,10 +236,7 @@ class _DashBoardState extends State<DashBoard> {
                   // })
 
                   ///Logics for notification
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => NotiPage()),
-                  );
+                  Get.to(NotiPage());
                 },),
               ),
               SizedBox(width: 10.0,),
@@ -400,33 +361,23 @@ class _DashBoardState extends State<DashBoard> {
                           TableRow(
                             children: [
                               InkWell(
-                                onTap:()=>Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => ProductPage()),
-                                ),
+                                onTap:(){
+                                  Get.to(ProductPage(),
+                                );},
                                   child:  CardIcon(Icon(Icons.add,size: 50,color: Colors.white,), 'ဆေးပစ္စည်းများ','$productCount','#FD7F2C','#FD9346'),
                               ),
                               InkWell(
-                                onTap: () =>Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => EditCategory()),
-                                ),
+                                onTap: () =>Get.to(EditCategory()),
                                   child: CardIcon(Icon(Icons.category,size: 50,color: Colors.white,), 'အမျိုးအစားများ','$categoryCount','#48b1bf','#06beb6')),
                             ]
                           ),
                           TableRow(
                               children: [
                                 InkWell(
-                                    onTap: ()=> Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => EditUnt()),
-                                    ),
+                                    onTap: ()=> Get.to( EditUnt()),
                                     child: CardIcon(Icon(Icons.ac_unit,size: 50,color: Colors.white,), 'ယူနစ်များ','$unitCount','#56ab2f','#43cea2')),
                                 InkWell(
-                                    onTap: ()=> Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => Register()),
-                                    ),
+                                    onTap: ()=>Get.to(Register()),
                                     child: CardIcon(Icon(Icons.account_circle,size: 50,color: Colors.white,), 'မှတ်ပုံတင်ရန်','$userCount','#F7971E','#FFD200')),
                               ]
                           )
@@ -440,8 +391,7 @@ class _DashBoardState extends State<DashBoard> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   Widget CardIcon(Icon icon,String text,String number,String start,String End){
@@ -595,10 +545,8 @@ class _HeaderOnlyState extends State<HeaderOnly> {
             style: new TextStyle(fontFamily: Constants.PrimaryFont,fontSize: 14.0),
           ),
           onTap: () {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => OrderPage()));
+            Navigator.of(context).pop();
+            Get.to(OrderPage());
           },
         ),
         Padding(
@@ -619,10 +567,8 @@ class _HeaderOnlyState extends State<HeaderOnly> {
             style: new TextStyle(fontFamily: Constants.PrimaryFont,fontSize: 14.0),
           ),
           onTap: () {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => VoucherPage()));
+            Navigator.of(context).pop();
+            Get.to(VoucherPage());
           },
         ),
         Padding(
@@ -643,10 +589,8 @@ class _HeaderOnlyState extends State<HeaderOnly> {
            style: new TextStyle(fontFamily: Constants.PrimaryFont,fontSize: 14.0),
          ),
          onTap: () {
-           Navigator.pushReplacement(
-               context,
-               MaterialPageRoute(
-                   builder: (context) => ChatBox()));
+           Navigator.of(context).pop();
+           Get.to(ChatBox());
          },
        ) : Badge(
          position: BadgePosition(top: -5,end: 30),
@@ -660,10 +604,8 @@ class _HeaderOnlyState extends State<HeaderOnly> {
               style: new TextStyle(fontFamily: Constants.PrimaryFont,fontSize: 14.0),
             ),
             onTap: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ChatBox()));
+              Navigator.of(context).pop();
+              Get.to(ChatBox());
             },
           ),
        ),
@@ -723,10 +665,7 @@ class _HeaderOnlyState extends State<HeaderOnly> {
                         if (user == null) {
                           print('User is currently signed out!');
                           pref.clear();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => LoginPage()),
-                          );
+                          Get.offAll(LoginPage());
                         } else {
                           print('User is signed in!');
                         }

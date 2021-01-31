@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:double_back_to_close/double_back_to_close.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -58,43 +59,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
     super.initState();
   }
 
-  Future<bool> _onWillPop() async {
-    print('hellp');
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text( 'Application မှထွက်ရန် သေချာပြီလား?',
-            style: new TextStyle(
-                fontSize: 20.0, color: Constants.thirdColor,fontFamily: Constants.PrimaryFont)),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('ထွက်မည်',
-                style: new TextStyle(
-                    fontSize: 16.0,
-                    color: Constants.primaryColor,
-                    fontFamily: Constants.PrimaryFont
-                ),
-                textAlign: TextAlign.right),
-            onPressed: () async {
-              SystemNavigator.pop();
-            },
-          ),
-          FlatButton(
-            child: Text('မထွက်ပါ',
-                style: new TextStyle(
-                    fontSize: 16.0,
-                    color: Constants.primaryColor,
-                    fontFamily: Constants.PrimaryFont
-                ),
-                textAlign: TextAlign.right),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          )
-        ],
-      ),
-    );
-  }
 
 
   String validateEmail(String value) {
@@ -124,8 +88,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
   }
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop:_onWillPop ,
+    return DoubleBack(
+        message:"Press back again to close",
       child: MultiProvider(
         providers: [
           Provider<NetworkProvider>(
@@ -371,7 +335,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin{
                                     height: 130.0,
                                   ),
                                   Text(
-                                    'Version 1.0.3',
+                                    'Version 1.1.1',
                                     style:
                                     TextStyle(color: Constants.primaryColor, fontSize: 20),
                                   ),

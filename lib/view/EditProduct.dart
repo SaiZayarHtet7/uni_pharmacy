@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/route_manager.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uni_pharmacy/models/PriceModel.dart';
@@ -101,7 +102,7 @@ class _EditProductState extends State<EditProduct> {
         FirebaseStorageService().DeletePhoto(productImage);
       }
     }
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProductPage()));
+    Get.off(ProductPage());
   }
   ///for search Algorithm
   setSearchParam(String caseNumber) {
@@ -147,7 +148,7 @@ class _EditProductState extends State<EditProduct> {
                     FirebaseStorageService().DeletePhoto(productImage);
                   }
                 }
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProductPage()));})
+                Get.off(ProductPage());})
             ),
           body: startLoading==true ? Center(child: CircularProgressIndicator(),): SingleChildScrollView(
             child: Container(
@@ -536,8 +537,7 @@ class _EditProductState extends State<EditProduct> {
                                     duration: Duration(seconds: 3),
                                     backgroundColor: Colors.greenAccent,
                                   ));
-                                  Future.delayed(Duration(seconds: 1), () =>  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                                      ProductPage()), (Route<dynamic> route) => false));
+                                  Future.delayed(Duration(seconds: 1), () =>   Get.off( ProductPage()));
                                 },
                               )
                             ],
@@ -610,7 +610,7 @@ class _EditProductState extends State<EditProduct> {
   }
 
   Future _openGallary(BuildContext context) async {
-    var picture = await picker.getImage(source: ImageSource.gallery);
+    var picture = await picker.getImage(source: ImageSource.gallery,imageQuality: 50);
     File tmpFile = File(picture.path);
     slideImage= tmpFile;
     Navigator.pop(context);
@@ -631,7 +631,7 @@ class _EditProductState extends State<EditProduct> {
   }
 
   Future _openCamera(BuildContext context) async {
-    final picture = await picker.getImage(source: ImageSource.camera);
+    final picture = await picker.getImage(source: ImageSource.camera,imageQuality: 50);
     File tmpFile = File(picture.path);
 
     slideImage= tmpFile;Navigator.pop(context);
@@ -928,8 +928,10 @@ class _EditProductState extends State<EditProduct> {
 
                                                   FirestoreService().editPrice(
                                                       'price', productId, pricemodel);
+
                                                   UpdatePriceModel updatePriceModel=UpdatePriceModel(
                                                       id:uuid.v4(),
+                                                       productId: productId,
                                                       kind: kindPrice,
                                                       quantity: int.parse(quantityController.text),
                                                       unit: unit,
@@ -939,6 +941,7 @@ class _EditProductState extends State<EditProduct> {
                                                       newPrice: priceController.text,
                                                       createdDate: DateTime.now().millisecondsSinceEpoch
                                                   );
+                                                  print("price Id "+updatePriceModel.id);
                                                   FirestoreService().addUpdatedPrice(updatePriceModel);
 
                                               }

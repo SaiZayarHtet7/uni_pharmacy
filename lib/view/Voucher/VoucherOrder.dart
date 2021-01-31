@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/route_manager.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_pharmacy/models/NotiModel.dart';
@@ -95,8 +96,7 @@ class _VoucherOrderState extends State<VoucherOrder> {
 
 
   Future<bool> _onWillPop() async {
-    print("hello back key");
-    Navigator.of(context).pop();
+    Get.back();
   }
 
 
@@ -115,7 +115,7 @@ class _VoucherOrderState extends State<VoucherOrder> {
         toolbarHeight: 70,
         automaticallyImplyLeading: false,
         leading: IconButton(icon: Icon(Icons.arrow_back_ios,color: Colors.white,), onPressed: (){
-          Navigator.of(context).pop();
+          Get.back();
         }),
         backgroundColor: Constants.primaryColor,
         title: Text('ဘောက်ချာအမှတ် ${convertVoucher(voucherNumber)}'),
@@ -172,7 +172,6 @@ class _VoucherOrderState extends State<VoucherOrder> {
                     child: Scrollbar(
                       controller: scrollController,
                       isAlwaysShown: true,
-
                       child: StreamBuilder<QuerySnapshot>(
                           stream: FirebaseFirestore.instance.collection('voucher').doc(voucherId).collection("order").snapshots(),
                           builder: (BuildContext context,
@@ -224,10 +223,7 @@ class _VoucherOrderState extends State<VoucherOrder> {
                                                             .white,)),
                                                 ),
                                                 onTap: () {
-                                                  Navigator.pushReplacement(
-                                                    context,
-                                                    MaterialPageRoute(builder: (context) => ProductOrder('voucher',voucherId,voucherNumber, data.data()['product_id'],data.data()['product_name'],data.data()['product_image'],data.data()['order_id'],data.data()['quantity'],data.data()['unit'],data.data()['cost'])),
-                                                  );
+                                                    Get.off(ProductOrder('voucher',voucherId,voucherNumber, data.data()['product_id'],data.data()['product_name'],data.data()['product_image'],data.data()['order_id'],data.data()['quantity'],data.data()['unit'],data.data()['cost']));
                                                 },
                                               ),
                                             ),

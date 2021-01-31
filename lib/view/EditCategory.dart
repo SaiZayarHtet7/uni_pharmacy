@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/route_manager.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uni_pharmacy/models/CategoryModel.dart';
@@ -57,7 +58,6 @@ class _EditCategoryState extends State<EditCategory> {
                     onTap: (){
                       FocusScope.of(context).requestFocus(FocusNode());
                       Navigator.push(context, MaterialPageRoute(builder: (context)=> CRUD_Category(document.data()['category_image'],document.data()['category_name'],document.data()['id'])));
-
                     },
                     child: new  Container(
                       padding: EdgeInsets.all(0),
@@ -186,7 +186,7 @@ class _CRUD_CategoryState extends State<CRUD_Category> {
         leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_rounded),
             onPressed: (){
-              Navigator.pop(context);
+              Get.back();
             }
         ),
         title: Text(uuid==""? 'အမျိုးအစား အသစ်ထည့်မည်' : "အမျိုးအစား ပြင်ဆင်မည်"),backgroundColor: Constants.primaryColor,),
@@ -233,7 +233,6 @@ class _CRUD_CategoryState extends State<CRUD_Category> {
                 ),
                 ),
                 Container(
-
                   child:loading==false? Container(
                     child:
                     InkWell(
@@ -366,7 +365,7 @@ class _CRUD_CategoryState extends State<CRUD_Category> {
   }
 
   Future _openGallary(BuildContext context) async {
-    var picture = await picker.getImage(source: ImageSource.gallery);
+    var picture = await picker.getImage(source: ImageSource.gallery,imageQuality: 50);
     File tmpFile = File(picture.path);
     slideImage= tmpFile;
     Navigator.pop(context);
@@ -387,7 +386,7 @@ class _CRUD_CategoryState extends State<CRUD_Category> {
   }
 
   Future _openCamera(BuildContext context) async {
-    final picture = await picker.getImage(source: ImageSource.camera);
+    final picture = await picker.getImage(source: ImageSource.camera,imageQuality: 50);
     File tmpFile = File(picture.path);
 
     slideImage= tmpFile;Navigator.pop(context);

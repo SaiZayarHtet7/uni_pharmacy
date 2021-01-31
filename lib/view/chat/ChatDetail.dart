@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/route_manager.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -70,7 +71,7 @@ class _ChatDetailState extends State<ChatDetail> {
             IconButton(
                 icon: Icon(Icons.arrow_back_ios_rounded),
                 onPressed: (){
-                  Navigator.pop(context);
+                  Get.back();
                 }
             ),
             SizedBox(width: 10,),
@@ -368,7 +369,7 @@ class _ChatDetailState extends State<ChatDetail> {
   }
 
   Future _openGallary(BuildContext context) async {
-    var picture = await picker.getImage(source: ImageSource.gallery);
+    var picture = await picker.getImage(source: ImageSource.gallery,imageQuality: 50);
     File tmpFile = File(picture.path);
     messageImage= tmpFile;
     String imageLink=await FirebaseStorageService().UploadPhoto('chat', messageImage);
@@ -389,7 +390,7 @@ class _ChatDetailState extends State<ChatDetail> {
   }
 
   Future _openCamera(BuildContext context) async {
-    final picture = await picker.getImage(source: ImageSource.camera);
+    final picture = await picker.getImage(source: ImageSource.camera,imageQuality: 50);
     File tmpFile = File(picture.path);
     messageImage= tmpFile;
     String imageLink=await FirebaseStorageService().UploadPhoto('chat', messageImage);

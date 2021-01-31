@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:uni_pharmacy/models/ProductModel.dart';
 import 'package:uni_pharmacy/service/firestore_service.dart';
 import 'package:uni_pharmacy/util/constants.dart';
@@ -22,8 +23,7 @@ class _ProductPageState extends State<ProductPage> {
 
   Future<bool> _onWillPop() async {
     print('hellp');
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-        DashBoard()), (Route<dynamic> route) => false);
+    Get.offAll( DashBoard());
   }
   @override
   Widget build(BuildContext context) {
@@ -35,8 +35,7 @@ class _ProductPageState extends State<ProductPage> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios_rounded),
             onPressed: (){
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                  DashBoard()), (Route<dynamic> route) => false);
+              Get.offAll( DashBoard());
             }
           ),
           title: Text('ဆေးပစ္စည်းများ'),
@@ -115,10 +114,7 @@ class _ProductPageState extends State<ProductPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => EditProduct("", "", "", "", "")));
+            Get.off(EditProduct("", "", "", "", ""));
           },
           child: Icon(
             Icons.add,
@@ -138,11 +134,7 @@ class _ProductPageState extends State<ProductPage> {
         print('PRoduct name is == '+ name);
         print('PRoduct description =='+description);
         print("product photo =="+photo);
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    EditProduct(name, photo, id, description, category)));
+        Get.off(EditProduct(name, photo, id, description, category));
       },
       child:  Container(
         padding: EdgeInsets.all(0),

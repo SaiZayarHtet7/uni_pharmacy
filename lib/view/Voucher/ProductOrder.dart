@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_pharmacy/models/OrderModel.dart';
@@ -58,13 +59,12 @@ class _ProductOrderState extends State<ProductOrder> {
 
   Future<bool> _onWillPop() async {
     if(orderId=="" || orderId==null) {
-      Navigator.of(context).pop();
+      Get.back();
     }else{
       if(kind=="order"){
       }
       else{
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => VoucherOrder(voucherId, voucherNumber)));
+        Get.off(VoucherOrder(voucherId, voucherNumber));
       }
     }
   }
@@ -102,13 +102,13 @@ class _ProductOrderState extends State<ProductOrder> {
           automaticallyImplyLeading: false,
           leading: IconButton(icon: Icon(Icons.arrow_back_ios,color: Colors.white,), onPressed: (){
             if(orderId=="" || orderId==null) {
-              Navigator.of(context).pop();
+              Get.back();
             }else{
               if(kind=="order"){
+                print("order back");
               }
               else{
-                Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (context) => VoucherOrder(voucherId, voucherNumber)));
+                Get.off(VoucherOrder(voucherId, voucherNumber));
               }
             }
           }),
@@ -408,9 +408,7 @@ class _ProductOrderState extends State<ProductOrder> {
                             ));
                             Future.delayed(const Duration(milliseconds: 500), () {
                               setState(() {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => VoucherOrder(voucherId,voucherNumber)),
+                                Get.off(VoucherOrder(voucherId,voucherNumber)
                                 );
                               });
                             });
